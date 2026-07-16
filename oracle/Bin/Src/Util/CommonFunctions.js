@@ -164,12 +164,12 @@ class CommonFunctions {
     static async createFolder(strParentFolder, strFolderNames) {
         let arrFolders = strFolderNames.split(",");
         for (var i = 0; i < arrFolders.length; i++) {
-            fs.mkdir(path.join(Constants_1.Constants.PROJECT_FOLDER, strParentFolder, arrFolders[i]), { recursive: true }, function (err) {
-                if (err)
-                    console.log(" Results directory NOT created." + err);
-                else
-                    console.log(" Results directory successfully created.");
-            });
+            try {
+                fs.mkdirSync(path.join(Constants_1.Constants.PROJECT_FOLDER, strParentFolder, arrFolders[i]), { recursive: true });
+                console.log(" Results directory successfully created.");
+            } catch (err) {
+                console.log(" Results directory NOT created." + err);
+            }
         }
     }
     static async getDataFromFileAsDictionary(strFileName) {

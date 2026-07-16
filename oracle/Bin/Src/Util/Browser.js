@@ -24,7 +24,7 @@ class Browser {
                 driver = await this.getChromeDriver();
                 break;
         }
-        await driver.manage().window().maximize();
+        try { await driver.manage().window().maximize(); } catch(e) { /* ignore maximize errors on Linux */ }
         return driver;
     }
     static async getChromeDriver() {
@@ -41,10 +41,11 @@ class Browser {
         };
         chromeOptions.setUserPreferences(prefs);
         // chromeOptions.addArguments("--incognito");
-        chromeOptions.addArguments("start-maximized");
+        chromeOptions.addArguments("--window-size=1920,1080");
         chromeOptions.addArguments("--disable-popup-blocking");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
         chromeOptions.addArguments("--safebrowsing-disable-download-protection");
         await chromeCapabilities.set('acceptInsecureCerts', true);
         await chromeCapabilities.set('acceptSslCerts', true);
