@@ -108,7 +108,8 @@ server.listen(PORT, () => {
 // Schedule cron jobs for all enabled schedules
 const cron = require('node-cron');
 const db = require('./db');
-const { startRun } = require('../engine/runner');
+let startRun;
+try { startRun = require('../engine/runner').startRun; } catch(e) { startRun = () => console.warn('[Engine] Selenium runner not available on this host'); }
 const activeCrons = new Map();
 
 function initSchedules() {
