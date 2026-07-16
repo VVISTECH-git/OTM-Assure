@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkbenchPage = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const OJETActions_1 = require("../util/OJETActions");
+const OJETActions_1 = require("../Util/OJETActions");
 class WorkbenchPage extends OJETActions_1.OJETActions {
     constructor() {
         super(...arguments);

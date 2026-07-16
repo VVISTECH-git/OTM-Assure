@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDirectShipmentEquipmentPromptPopup = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const Popup_1 = require("../util/Popup");
+const Popup_1 = require("../Util/Popup");
 const BuildShipmentPopup_1 = require("./BuildShipmentPopup");
 class CreateDirectShipmentEquipmentPromptPopup extends Popup_1.Popup {
     constructor() {

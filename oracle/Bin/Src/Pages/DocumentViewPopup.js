@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentViewPopup = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const Popup_1 = require("../util/Popup");
+const Popup_1 = require("../Util/Popup");
 const DocumentMessagePopup_1 = require("./DocumentMessagePopup");
 class DocumentViewPopup extends Popup_1.Popup {
     constructor() {

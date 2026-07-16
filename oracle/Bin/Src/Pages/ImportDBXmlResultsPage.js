@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ImportDBXmlResultsPage = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const Page_1 = require("../util/Page");
+const Page_1 = require("../Util/Page");
 class ImportDBXmlResultsPage extends Page_1.Page {
     constructor() {
         super(...arguments);

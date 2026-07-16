@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginPage = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const Page_1 = require("../util/Page");
+const Page_1 = require("../Util/Page");
 const HomePage_1 = require("./HomePage");
 class LoginPage extends Page_1.Page {
     constructor() {

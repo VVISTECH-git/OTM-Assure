@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomePage = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
-const Page_1 = require("../util/Page");
-const Constants_1 = require("../util/Constants");
+const Page_1 = require("../Util/Page");
+const Constants_1 = require("../Util/Constants");
 const elements_1 = require("@oracle/oraclejet-webdriver/elements");
 class HomePage extends Page_1.Page {
     constructor() {

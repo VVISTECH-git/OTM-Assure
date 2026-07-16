@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RateLoadDefinationsPage = void 0;
 const selenium_webdriver_1 = require("selenium-webdriver");
 const OJETActions_1 = require("../Util/OJETActions");
-const CommonFunctions_1 = require("../util/CommonFunctions");
+const CommonFunctions_1 = require("../Util/CommonFunctions");
 class RateLoadDefinationsPage extends OJETActions_1.OJETActions {
     constructor() {
         super(...arguments);
