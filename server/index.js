@@ -67,6 +67,7 @@ const server = http.createServer(async (req, res) => {
       if (pathname.startsWith('/api/scenarios')) return routeScenarios(req, res, pathname, method, body);
       if (pathname.startsWith('/api/testdata'))  return routeTestData(req, res, pathname, method, body);
       if (pathname.startsWith('/api/runs'))      return routeRuns(req, res, pathname, method, body);
+      if (pathname.startsWith('/api/gha'))       return routeRuns(req, res, pathname, method, body);
       if (pathname.startsWith('/api/defects'))   return routeDefects(req, res, pathname, method, body);
       if (pathname.startsWith('/api/users'))     return routeUsers(req, res, pathname, method, body);
       if (pathname.startsWith('/api/schedules')) return routeSchedules(req, res, pathname, method, body);
