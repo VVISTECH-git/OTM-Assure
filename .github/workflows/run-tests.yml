@@ -1,0 +1,59 @@
+name: Run OTM Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Run ID from portal'
+        required: true
+      instance_id:
+        description: 'Instance ID (TST, UAT, etc.)'
+        required: true
+      scenario_ids:
+        description: 'JSON array of scenario IDs e.g. ["SC-01","SC-02"]'
+        required: true
+      render_api_url:
+        description: 'Render API base URL'
+        required: true
+        default: 'https://otm-assure.onrender.com'
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+
+      - name: Start Xvfb (virtual display)
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1920x1080x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Run OTM tests via GHA runner
+        env:
+          RUN_ID: ${{ github.event.inputs.run_id }}
+          INSTANCE_ID: ${{ github.event.inputs.instance_id }}
+          SCENARIO_IDS: ${{ github.event.inputs.scenario_ids }}
+          RENDER_API_URL: ${{ github.event.inputs.render_api_url }}
+          GHA_SECRET: ${{ secrets.GHA_SECRET }}
+          DISPLAY: ':99'
+        run: node engine/gha-runner.js
