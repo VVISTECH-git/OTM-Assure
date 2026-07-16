@@ -14,9 +14,9 @@
   {
     "id": "TST",
     "label": "Test",
-    "url": "",
-    "dba_username": "",
-    "dba_password": "",
+    "url": "https://otmgtm-test-a629995.otmgtm.us-phoenix-1.ocs.oraclecloud.com/",
+    "dba_username": "LEL7597_TMS",
+    "dba_password": "Oracle@12345678",
     "non_dba_username": "",
     "non_dba_password": "",
     "browser": "chrome",
