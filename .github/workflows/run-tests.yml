@@ -57,3 +57,19 @@ jobs:
           GHA_SECRET: ${{ secrets.GHA_SECRET }}
           DISPLAY: ':99'
         run: node engine/gha-runner.js
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ github.event.inputs.run_id }}
+          path: oracle/Results/SanityBatch/Screenshots/
+          if-no-files-found: ignore
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ github.event.inputs.run_id }}
+          path: oracle/Results/SanityBatch/Logs/
+          if-no-files-found: ignore
