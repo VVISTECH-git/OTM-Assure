@@ -31,7 +31,7 @@ class Browser {
         let driver;
         var webdriver = await require('selenium-webdriver');
         var chrome = require("selenium-webdriver/chrome");
-        let strDownloadFolder = await require('path').join(process.env.USERPROFILE, "Downloads");
+        let strDownloadFolder = await require('path').join(process.env.USERPROFILE || process.env.HOME || '/tmp', "Downloads");
         var chromeCapabilities = await webdriver.Capabilities.chrome();
         var chromeOptions = new chrome.Options();
         let prefs = {
