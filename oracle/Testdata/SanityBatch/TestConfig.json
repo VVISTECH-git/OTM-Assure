@@ -1,0 +1,6 @@
+{      
+    "USERNAME": "DBA USER NAME",
+    "PASSWORD": "oracle1234",
+    "NONDBAUSER": "dummy@dummy.com",
+    "NONDBAPASSWORD": "CHANGEME"
+}

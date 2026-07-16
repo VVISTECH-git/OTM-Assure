@@ -1,0 +1,2 @@
+LOCATONID=LAS VEGAS-NV
+FILEPATH=testfile.txt

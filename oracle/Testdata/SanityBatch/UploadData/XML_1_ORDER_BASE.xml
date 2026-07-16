@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transmission>
+   <TransmissionHeader>
+<UserName>DEMODOMAIN.DEMOUSER</UserName>
+<Password>CHANGEME</Password>
+   </TransmissionHeader>
+   <TransmissionBody>
+      <GLogXMLElement>
+         <TransOrder>
+            <TransOrderHeader>
+               <TransOrderGid>
+                  <Gid>
+                     <DomainName>DEMODOMAIN</DomainName>
+                     <Xid>OB-SU</Xid>
+                  </Gid>
+               </TransOrderGid>
+               <TransactionCode>IU</TransactionCode>
+               <ReleaseMethodGid>
+                  <Gid>
+                     <Xid>SHIP_UNITS</Xid>
+                  </Gid>
+               </ReleaseMethodGid>
+               <MustShipDirect>N</MustShipDirect>
+               <MustShipThruXDock>N</MustShipThruXDock>
+               <MustShipThruPool>N</MustShipThruPool>
+               <BundlingType>AUTOMATIC</BundlingType>
+               <IsShipperKnown>N</IsShipperKnown>
+               <TotalNetWeightVolume>
+                  <Weight>
+                     <WeightValue>8000.0</WeightValue>
+                     <WeightUOMGid>
+                        <Gid>
+                           <Xid>LB</Xid>
+                        </Gid>
+                     </WeightUOMGid>
+                  </Weight>
+                  <Volume>
+                     <VolumeValue>400.0</VolumeValue>
+                     <VolumeUOMGid>
+                        <Gid>
+                           <Xid>CUFT</Xid>
+                        </Gid>
+                     </VolumeUOMGid>
+                  </Volume>
+               </TotalNetWeightVolume>
+               <CustomerUnitizationRequest>N</CustomerUnitizationRequest>
+               <OrderPriority>1</OrderPriority>
+               <FlexFieldStrings />
+               <FlexFieldNumbers />
+               <FlexFieldDates />
+               <FlexFieldCurrencies />
+            </TransOrderHeader>
+            <ShipUnitDetail>
+               <ShipUnit>
+                  <ShipUnitGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>OB-SU-001</Xid>
+                     </Gid>
+                  </ShipUnitGid>
+                  <TransactionCode>IU</TransactionCode>
+                  <ShipFromLocationRef>
+                     <LocationRef>
+                        <LocationGid>
+                           <Gid>
+                              <DomainName>DEMODOMAIN</DomainName>
+                              <Xid>LAS VEGAS-NV</Xid>
+                           </Gid>
+                        </LocationGid>
+                     </LocationRef>
+                  </ShipFromLocationRef>
+                  <ShipToLocationRef>
+                     <LocationRef>
+                        <LocationGid>
+                           <Gid>
+                              <DomainName>DEMODOMAIN</DomainName>
+                              <Xid>LOS ANGELES-CA</Xid>
+                           </Gid>
+                        </LocationGid>
+                     </LocationRef>
+                  </ShipToLocationRef>
+                  <TimeWindow>
+                     <PickupIsAppt>N</PickupIsAppt>
+                     <DeliveryIsAppt>N</DeliveryIsAppt>
+                  </TimeWindow>
+                  <WeightVolume>
+                     <Weight>
+                        <WeightValue>800.0</WeightValue>
+                        <WeightUOMGid>
+                           <Gid>
+                              <Xid>LB</Xid>
+                           </Gid>
+                        </WeightUOMGid>
+                     </Weight>
+                     <Volume>
+                        <VolumeValue>40.0</VolumeValue>
+                        <VolumeUOMGid>
+                           <Gid>
+                              <Xid>CUFT</Xid>
+                           </Gid>
+                        </VolumeUOMGid>
+                     </Volume>
+                  </WeightVolume>
+                  <UnitNetWeightVolume>
+                     <Weight>
+                        <WeightValue>800.0</WeightValue>
+                        <WeightUOMGid>
+                           <Gid>
+                              <Xid>LB</Xid>
+                           </Gid>
+                        </WeightUOMGid>
+                     </Weight>
+                     <Volume>
+                        <VolumeValue>40.0</VolumeValue>
+                        <VolumeUOMGid>
+                           <Gid>
+                              <Xid>CUFT</Xid>
+                           </Gid>
+                        </VolumeUOMGid>
+                     </Volume>
+                  </UnitNetWeightVolume>
+                  <DeclaredValue>
+                     <FinancialAmount>
+                        <GlobalCurrencyCode>USD</GlobalCurrencyCode>
+                        <MonetaryAmount>0.0</MonetaryAmount>
+                        <FuncCurrencyAmount>0.0</FuncCurrencyAmount>
+                     </FinancialAmount>
+                  </DeclaredValue>
+                  <ShipUnitCount>10</ShipUnitCount>
+                  <IsShippable>N</IsShippable>
+                  <ReleasedCount>10</ReleasedCount>
+                  <Status>
+                     <StatusTypeGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>QUANTITY VALIDATION DEST</Xid>
+                        </Gid>
+                     </StatusTypeGid>
+                     <StatusValueGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>QUANTITY VALIDATION DEST_NOT STARTED</Xid>
+                        </Gid>
+                     </StatusValueGid>
+                  </Status>
+                  <Status>
+                     <StatusTypeGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>SHIP UNIT RELEASE STATUS</Xid>
+                        </Gid>
+                     </StatusTypeGid>
+                     <StatusValueGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>SHIP UNIT RELEASE STATUS_COMPLETE</Xid>
+                        </Gid>
+                     </StatusValueGid>
+                  </Status>
+                  <Status>
+                     <StatusTypeGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>RELEASE CONTROL SU</Xid>
+                        </Gid>
+                     </StatusTypeGid>
+                     <StatusValueGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>RELEASE CONTROL SU_ALLOW RELEASING</Xid>
+                        </Gid>
+                     </StatusValueGid>
+                  </Status>
+                  <Status>
+                     <StatusTypeGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>QUANTITY VALIDATION SRC</Xid>
+                        </Gid>
+                     </StatusTypeGid>
+                     <StatusValueGid>
+                        <Gid>
+                           <DomainName>DEMODOMAIN</DomainName>
+                           <Xid>QUANTITY VALIDATION SRC_NOT STARTED</Xid>
+                        </Gid>
+                     </StatusValueGid>
+                  </Status>
+                  <FlexFieldStrings />
+                  <FlexFieldNumbers />
+                  <FlexFieldDates />
+               </ShipUnit>
+            </ShipUnitDetail>
+            <Location>
+               <TransactionCode>IU</TransactionCode>
+               <LocationGid>
+                  <Gid>
+                     <DomainName>DEMODOMAIN</DomainName>
+                     <Xid>LAS VEGAS-NV</Xid>
+                  </Gid>
+               </LocationGid>
+               <LocationName>LAS VEGAS-NV</LocationName>
+               <IsTemplate>N</IsTemplate>
+               <Address>
+                  <AddressLines>
+                     <SequenceNumber>1</SequenceNumber>
+                     <AddressLine>495 S MAIN ST.</AddressLine>
+                  </AddressLines>
+                  <AddressLines>
+                     <SequenceNumber>3</SequenceNumber>
+                     <AddressLine>ROOM 1234</AddressLine>
+                  </AddressLines>
+                  <City>LAS VEGAS</City>
+                  <ProvinceCode>NV</ProvinceCode>
+                  <PostalCode>89101</PostalCode>
+                  <CountryCode3Gid>
+                     <Gid>
+                        <Xid>USA</Xid>
+                     </Gid>
+                  </CountryCode3Gid>
+                  <TimeZoneGid>
+                     <Gid>
+                        <Xid>America/Los_Angeles</Xid>
+                     </Gid>
+                  </TimeZoneGid>
+                  <Latitude>36.17</Latitude>
+                  <Longitude>-115.12</Longitude>
+               </Address>
+               <IsTemporary>N</IsTemporary>
+               <LocationRole>
+                  <LocationRoleGid>
+                     <Gid>
+                        <Xid>SHIPFROM/SHIPTO</Xid>
+                     </Gid>
+                  </LocationRoleGid>
+                  <XDockIsInboundBias>N</XDockIsInboundBias>
+                  <CreatePoolHandlingShipment>N</CreatePoolHandlingShipment>
+                  <CreateXDockHandlingShipment>N</CreateXDockHandlingShipment>
+                  <IsMixedFreightTHUAllowed>N</IsMixedFreightTHUAllowed>
+               </LocationRole>
+               <IsMakeAppointmentBeforePlan>N</IsMakeAppointmentBeforePlan>
+               <IsShipperKnown>N</IsShipperKnown>
+               <IsAddressValid>U</IsAddressValid>
+               <IsLTLSplitable>N</IsLTLSplitable>
+               <ExcludeFromRouteExec>N</ExcludeFromRouteExec>
+               <Status>
+                  <StatusTypeGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>CREDIT LEVEL</Xid>
+                     </Gid>
+                  </StatusTypeGid>
+                  <StatusValueGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>CREDIT LEVEL_UNKNOWN</Xid>
+                     </Gid>
+                  </StatusValueGid>
+               </Status>
+               <Status>
+                  <StatusTypeGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>LOCATION GUARANTEED DELIVERY</Xid>
+                     </Gid>
+                  </StatusTypeGid>
+                  <StatusValueGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>LOCATION GUARANTEED DELIVERY_NOT STARTED</Xid>
+                     </Gid>
+                  </StatusValueGid>
+               </Status>
+               <IsFixedAddress>N</IsFixedAddress>
+               <PrimaryAddressLineSeq>1</PrimaryAddressLineSeq>
+               <FlexFieldStrings />
+               <FlexFieldNumbers />
+               <FlexFieldDates />
+               <IsActive>Y</IsActive>
+            </Location>
+            <Location>
+               <TransactionCode>IU</TransactionCode>
+               <LocationGid>
+                  <Gid>
+                     <DomainName>DEMODOMAIN</DomainName>
+                     <Xid>LOS ANGELES-CA</Xid>
+                  </Gid>
+               </LocationGid>
+               <LocationName>ABC11</LocationName>
+               <IsTemplate>N</IsTemplate>
+               <Address>
+                  <AddressLines>
+                     <SequenceNumber>1</SequenceNumber>
+                     <AddressLine>455 N REXFORD DR.</AddressLine>
+                  </AddressLines>
+                  <City>BEVERLY HILLS</City>
+                  <ProvinceCode>CA</ProvinceCode>
+                  <PostalCode>90210</PostalCode>
+                  <CountryCode3Gid>
+                     <Gid>
+                        <Xid>USA</Xid>
+                     </Gid>
+                  </CountryCode3Gid>
+                  <TimeZoneGid>
+                     <Gid>
+                        <Xid>America/Los_Angeles</Xid>
+                     </Gid>
+                  </TimeZoneGid>
+                  <Latitude>34.0792</Latitude>
+                  <Longitude>-118.402</Longitude>
+               </Address>
+               <IsTemporary>N</IsTemporary>
+               <LocationRole>
+                  <LocationRoleGid>
+                     <Gid>
+                        <Xid>SHIPFROM/SHIPTO</Xid>
+                     </Gid>
+                  </LocationRoleGid>
+                  <XDockIsInboundBias>N</XDockIsInboundBias>
+                  <CreatePoolHandlingShipment>N</CreatePoolHandlingShipment>
+                  <CreateXDockHandlingShipment>N</CreateXDockHandlingShipment>
+                  <IsMixedFreightTHUAllowed>N</IsMixedFreightTHUAllowed>
+               </LocationRole>
+               <IsMakeAppointmentBeforePlan>N</IsMakeAppointmentBeforePlan>
+               <IsShipperKnown>N</IsShipperKnown>
+               <IsAddressValid>U</IsAddressValid>
+               <IsLTLSplitable>N</IsLTLSplitable>
+               <ExcludeFromRouteExec>N</ExcludeFromRouteExec>
+               <Status>
+                  <StatusTypeGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>CREDIT LEVEL</Xid>
+                     </Gid>
+                  </StatusTypeGid>
+                  <StatusValueGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>CREDIT LEVEL_UNKNOWN</Xid>
+                     </Gid>
+                  </StatusValueGid>
+               </Status>
+               <Status>
+                  <StatusTypeGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>LOCATION GUARANTEED DELIVERY</Xid>
+                     </Gid>
+                  </StatusTypeGid>
+                  <StatusValueGid>
+                     <Gid>
+                        <DomainName>DEMODOMAIN</DomainName>
+                        <Xid>LOCATION GUARANTEED DELIVERY_NOT STARTED</Xid>
+                     </Gid>
+                  </StatusValueGid>
+               </Status>
+               <IsFixedAddress>N</IsFixedAddress>
+               <PrimaryAddressLineSeq>1</PrimaryAddressLineSeq>
+               <FlexFieldStrings />
+               <FlexFieldNumbers />
+               <FlexFieldDates />
+               <IsActive>Y</IsActive>
+            </Location>
+         </TransOrder>
+      </GLogXMLElement>
+   </TransmissionBody>
+</Transmission>

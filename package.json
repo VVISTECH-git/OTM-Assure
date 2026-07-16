@@ -1,0 +1,35 @@
+{
+  "name": "otm-assure",
+  "version": "1.0.0",
+  "description": "OTM Assure — Confidence after every upgrade",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev:server": "node server/index.js",
+    "dev:client": "cd client && npm run dev",
+    "build:client": "cd client && npm run build"
+  },
+  "dependencies": {
+    "@oracle/oraclejet-webdriver": "11.0.1",
+    "bcryptjs": "^2.4.3",
+    "chai": "4.3.10",
+    "docx": "^9.7.1",
+    "jsonpath": "*",
+    "jsonwebtoken": "^9.0.2",
+    "mocha": "*",
+    "mochawesome": "*",
+    "node-cron": "^3.0.3",
+    "selenium-webdriver": "3.6.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "*",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.0.0",
+    "@types/selenium-webdriver": "4.0.0",
+    "playwright": "^1.61.1",
+    "pptxgenjs": "^4.0.1"
+  },
+  "author": "VVIS Tech",
+  "license": "ISC"
+}

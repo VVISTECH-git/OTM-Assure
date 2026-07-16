@@ -1,0 +1,10 @@
+node_modules/
+*.db
+*.db-shm
+*.db-wal
+oracle/Results/
+screenshots/
+instances/
+uploads/
+server-out.txt
+.env
