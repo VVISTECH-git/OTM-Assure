@@ -232,7 +232,10 @@ module.exports = function(req, res, url, method, body) {
 
     broadcast('run:started', { runId, instanceId: instance_id, total: finalIds.length });
 
-    if (process.env.GITHUB_TOKEN) {
+    if (process.env.LOCAL_AGENT === 'true') {
+      // Local agent mode: just create the run record, local-agent.js will pick it up
+      console.log(`[Runs] Run ${runId} queued — waiting for local agent`);
+    } else if (process.env.GITHUB_TOKEN) {
       // Cloud mode: dispatch to GitHub Actions
       dispatchGitHubWorkflow(runId, instance_id, finalIds)
         .then(() => console.log(`[Runs] Dispatched GitHub Actions workflow for ${runId}`))
@@ -242,7 +245,7 @@ module.exports = function(req, res, url, method, body) {
           broadcast('run:completed', { runId, passed: 0, failed: finalIds.length, total: finalIds.length, error: e.message });
         });
     } else {
-      // Local mode: run Selenium directly
+      // Local mode: run Selenium directly on this server
       startRun(runId, instance_id, finalIds);
     }
 
