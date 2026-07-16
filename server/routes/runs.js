@@ -157,7 +157,7 @@ module.exports = function(req, res, url, method, body) {
     const runId = url.replace('/api/gha/runs/', '').replace('/complete', '');
     const { passed, failed, total, scenario_results } = body || {};
     db.prepare(
-      `UPDATE runs SET status='completed', completed_at=datetime('now'), passed=?, failed=?, duration_ms=(strftime('%s','now')-strftime('%s',started_at))*1000 WHERE id=?`
+      `UPDATE runs SET status='completed', completed_at=datetime('now'), passed=?, failed=?, duration_ms=(strftime('%s','now')-strftime('%s',COALESCE(started_at,created_at)))*1000 WHERE id=?`
     ).run(passed || 0, failed || 0, runId);
 
     // Update run_results per scenario so dashboard shows correct pass/fail badge
@@ -255,7 +255,7 @@ module.exports = function(req, res, url, method, body) {
     const allScenarios = db.prepare('SELECT id FROM scenarios WHERE status=? ORDER BY id').all('active').map(r => r.id);
     const finalIds = (scenario_ids && scenario_ids.length > 0) ? scenario_ids : allScenarios;
 
-    db.prepare(`INSERT INTO runs (id,instance_id,trigger,triggered_by,scenario_ids,status,total) VALUES (?,?,?,?,?,?,?)`)
+    db.prepare(`INSERT INTO runs (id,instance_id,trigger,triggered_by,scenario_ids,status,total,started_at) VALUES (?,?,?,?,?,?,?,datetime('now'))`)
       .run(runId, instance_id, 'Manual', triggered_by || 'Admin', JSON.stringify(finalIds), 'running', finalIds.length);
 
     // Seed scenario run_results rows so the portal shows scenarios immediately

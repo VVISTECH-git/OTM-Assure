@@ -166,6 +166,9 @@ function migrate() {
   if (!cols.includes('expected')) db.exec("ALTER TABLE run_steps ADD COLUMN expected TEXT DEFAULT NULL");
   if (!cols.includes('actual'))   db.exec("ALTER TABLE run_steps ADD COLUMN actual TEXT DEFAULT NULL");
 
+  // Backfill duration_ms for completed runs where started_at was never set
+  db.exec(`UPDATE runs SET duration_ms=(strftime('%s',completed_at)-strftime('%s',created_at))*1000 WHERE status='completed' AND duration_ms IS NULL AND completed_at IS NOT NULL AND created_at IS NOT NULL`);
+
   // Update SC-02 to real scenario if it was seeded with placeholder values
   db.prepare(`UPDATE scenarios SET name=?, script=? WHERE id='SC-02' AND script='Test_02_POImport.ts'`)
     .run('TR Order SAP Integration', 'Test_02_TROrderIntegration.ts');
@@ -215,18 +218,25 @@ function seed() {
       ['SC-01', 2, 'Enter password',             'Password field accepts input without error'],
       ['SC-01', 3, 'Click Sign In',              'Sign In button is clicked and authentication is initiated'],
       ['SC-01', 4, 'Verify home page',           'Transportation Management home page is displayed'],
-      ['SC-02',  0, 'Generate test order ID',                    'Order ID generated in format TR_YYYYMMDD_NNN'],
-      ['SC-02',  1, 'Upload XML to WMServlet',                   'XML payload POSTed to /GC3/glog.integration.servlet.WMServlet with Basic Auth'],
-      ['SC-02',  2, 'Verify WMServlet accepted',                 'HTTP 200 returned, no Error element in response body'],
-      ['SC-02',  3, 'Wait for agent processing',                 'Agent OR_CREATED_SAP_V2_HEAVY_ACTIONS fires within 30s'],
-      ['SC-02',  4, 'Login to OTM',                             'OTM home page loaded as LEL7597_TMS'],
-      ['SC-02',  5, 'Navigate to Order Release',                 'Order Management > Order Release finder screen displayed'],
-      ['SC-02',  6, 'Search for order',                          'Order TR_YYYYMMDD_001 found in OTM and opened'],
-      ['SC-02',  7, 'Verify Buy Itinerary = TURKEY_ITINERARY',   'BUY_ITINERARY_PROFILE_GID = TMS.TURKEY_ITINERARY (agent step 10)'],
-      ['SC-02',  8, 'Verify Fixed Itinerary = TURKEY_TO_ROE',    'FIXED_ITINERARY_GID = TMS.TURKEY_TO_ROE (agent step 21)'],
-      ['SC-02',  9, 'Verify Movement Type = EXPORT',             'MOVEMENT_TYPE refnum = EXPORT (agent step 18)'],
-      ['SC-02', 10, 'Verify Equipment Type = DRY/REEFER',        'EQUIPMENT_TYPE refnum = DRY or REEFER (agent step 15)'],
-      ['SC-02', 11, 'Verify Order Indicator = W',                'Order indicator ≠ B — no DN in TX1 (agent step 29)'],
+      ['SC-02',  0, 'Generate test order ID',              'Order ID generated in format TR_YYYYMMDD_NNN'],
+      ['SC-02',  1, 'Upload TX1 to WMServlet',             'TX1 XML POSTed to WMServlet — HTTP 200, no Error element'],
+      ['SC-02',  2, 'Verify TX1 accepted',                 'WMServlet accepted TX1 order creation'],
+      ['SC-02',  3, 'Login to OTM',                        'OTM home page loaded as LEL7597_TMS'],
+      ['SC-02',  4, 'Switch to TURKEY_PLANNER role',       'OTM reloaded under TURKEY_PLANNER role'],
+      ['SC-02',  5, 'Navigate to Order Management',        'Order Management > Orders - New finder displayed'],
+      ['SC-02',  6, 'Search for TX1 order',                'Order TR_YYYYMMDD_NNN found in Orders - New'],
+      ['SC-02',  7, 'Verify Movement Type',                'MOVEMENT_TYPE refnum = DOMESTIC or EXPORT'],
+      ['SC-02',  8, 'Verify Equipment Type',               'EQUIPMENT_TYPE refnum = DRY or REEFER'],
+      ['SC-02',  9, 'Verify Buy Itinerary = TURKEY_ITINERARY', 'Buy Itinerary Profile = TMS.TURKEY_ITINERARY on Constraints tab'],
+      ['SC-02', 10, 'Verify Fixed Itinerary',              'Fixed Itinerary logged (empty for domestic orders)'],
+      ['SC-02', 11, 'Upload TX2 modification',             'TX2 XML (RDD +4) POSTed to WMServlet — HTTP 200'],
+      ['SC-02', 12, 'Verify TX2 LDD updated',              'Late Delivery Date updated to TX2 RDD in order detail'],
+      ['SC-02', 13, 'Upload TX3 delivery note',            'TX3 XML (DN 0087325725) POSTed to WMServlet — HTTP 200'],
+      ['SC-02', 14, 'Verify Delivery Note Number',         'DELIVERY_NOTE_NUMBER refnum = 0087325725 in order detail'],
+      ['SC-02', 15, 'Verify Bulk Plan COMPLETED',          'Bulk Plan - Buy job status = COMPLETED'],
+      ['SC-02', 16, 'Verify Orders Failed to Plan = 0',   'Orders Failed to Plan count = 0 in Bulk Plan results'],
+      ['SC-02', 17, 'Verify order in Orders-Planned',      'Order appears in Orders - Planned with PLANNING_PLANNED status'],
+      ['SC-02', 18, 'Verify shipment in Shipments-New',    'Buy shipment appears in Shipment Management > Shipments - New'],
     ];
     const ins = db.prepare(`INSERT OR IGNORE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES (?,?,?,?)`);
     for (const s of stepDefs) ins.run(...s);
@@ -237,31 +247,55 @@ function seed() {
   const sc02Steps = db.prepare('SELECT COUNT(*) as c FROM scenario_steps WHERE scenario_id=?').get('SC-02');
   if (sc02Steps.c === 0) {
     const sc02Defs = [
-      ['SC-02',  0, 'Generate test order ID',                    'Order ID generated in format TR_YYYYMMDD_NNN'],
-      ['SC-02',  1, 'Upload XML to WMServlet',                   'XML payload POSTed to /GC3/glog.integration.servlet.WMServlet with Basic Auth'],
-      ['SC-02',  2, 'Verify WMServlet accepted',                 'HTTP 200 returned, no Error element in response body'],
-      ['SC-02',  3, 'Wait for agent processing',                 'Agent OR_CREATED_SAP_V2_HEAVY_ACTIONS fires within 30s'],
-      ['SC-02',  4, 'Login to OTM',                             'OTM home page loaded as LEL7597_TMS'],
-      ['SC-02',  5, 'Navigate to Order Release',                 'Order Management > Order Release finder screen displayed'],
-      ['SC-02',  6, 'Search for order',                          'Order TR_YYYYMMDD_001 found in OTM and opened'],
-      ['SC-02',  7, 'Verify Buy Itinerary = TURKEY_ITINERARY',   'BUY_ITINERARY_PROFILE_GID = TMS.TURKEY_ITINERARY (set by agent step 10)'],
-      ['SC-02',  8, 'Verify Fixed Itinerary = TURKEY_TO_ROE',    'FIXED_ITINERARY_GID = TMS.TURKEY_TO_ROE (set by agent step 21 for EXPORT)'],
-      ['SC-02',  9, 'Verify Movement Type = EXPORT',             'MOVEMENT_TYPE refnum = EXPORT (source TR ≠ dest country, agent step 18)'],
-      ['SC-02', 10, 'Verify Equipment Type = DRY/REEFER',        'EQUIPMENT_TYPE refnum = DRY or REEFER (agent step 15 based on dest equipment group)'],
-      ['SC-02', 11, 'Verify Order Indicator = W',                'Order indicator ≠ B — no delivery note in TX1 so indicator stays W (agent step 29)'],
+      ['SC-02',  0, 'Generate test order ID',              'Order ID generated in format TR_YYYYMMDD_NNN'],
+      ['SC-02',  1, 'Upload TX1 to WMServlet',             'TX1 XML POSTed to WMServlet — HTTP 200, no Error element'],
+      ['SC-02',  2, 'Verify TX1 accepted',                 'WMServlet accepted TX1 order creation'],
+      ['SC-02',  3, 'Login to OTM',                        'OTM home page loaded as LEL7597_TMS'],
+      ['SC-02',  4, 'Switch to TURKEY_PLANNER role',       'OTM reloaded under TURKEY_PLANNER role'],
+      ['SC-02',  5, 'Navigate to Order Management',        'Order Management > Orders - New finder displayed'],
+      ['SC-02',  6, 'Search for TX1 order',                'Order TR_YYYYMMDD_NNN found in Orders - New'],
+      ['SC-02',  7, 'Verify Movement Type',                'MOVEMENT_TYPE refnum = DOMESTIC or EXPORT'],
+      ['SC-02',  8, 'Verify Equipment Type',               'EQUIPMENT_TYPE refnum = DRY or REEFER'],
+      ['SC-02',  9, 'Verify Buy Itinerary = TURKEY_ITINERARY', 'Buy Itinerary Profile = TMS.TURKEY_ITINERARY on Constraints tab'],
+      ['SC-02', 10, 'Verify Fixed Itinerary',              'Fixed Itinerary logged (empty for domestic orders)'],
+      ['SC-02', 11, 'Upload TX2 modification',             'TX2 XML (RDD +4) POSTed to WMServlet — HTTP 200'],
+      ['SC-02', 12, 'Verify TX2 LDD updated',              'Late Delivery Date updated to TX2 RDD in order detail'],
+      ['SC-02', 13, 'Upload TX3 delivery note',            'TX3 XML (DN 0087325725) POSTed to WMServlet — HTTP 200'],
+      ['SC-02', 14, 'Verify Delivery Note Number',         'DELIVERY_NOTE_NUMBER refnum = 0087325725 in order detail'],
+      ['SC-02', 15, 'Verify Bulk Plan COMPLETED',          'Bulk Plan - Buy job status = COMPLETED'],
+      ['SC-02', 16, 'Verify Orders Failed to Plan = 0',   'Orders Failed to Plan count = 0 in Bulk Plan results'],
+      ['SC-02', 17, 'Verify order in Orders-Planned',      'Order appears in Orders - Planned with PLANNING_PLANNED status'],
+      ['SC-02', 18, 'Verify shipment in Shipments-New',    'Buy shipment appears in Shipment Management > Shipments - New'],
     ];
     const ins = db.prepare(`INSERT OR IGNORE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES (?,?,?,?)`);
     for (const s of sc02Defs) ins.run(...s);
     console.log('[DB] Seeded SC-02 step definitions');
   }
 
-  // Migration: update SC-02 step names to match current test implementation
-  db.prepare(`UPDATE scenario_steps SET step_name='Login to OTM', expected='OTM home page loaded as LEL7597_TMS' WHERE scenario_id='SC-02' AND step_index=3 AND step_name='Wait for agent processing'`).run();
-  db.prepare(`UPDATE scenario_steps SET step_name='Switch to TURKEY_PLANNER role', expected='OTM reloaded under TURKEY_PLANNER role' WHERE scenario_id='SC-02' AND step_index=4 AND step_name='Login to OTM'`).run();
-  db.prepare(`UPDATE scenario_steps SET step_name='Navigate to Order Management', expected='Order Management > Orders - New finder displayed' WHERE scenario_id='SC-02' AND step_index=5`).run();
-  db.prepare(`UPDATE scenario_steps SET step_name='Verify Fixed Itinerary', expected='Fixed Itinerary logged (empty for domestic orders)' WHERE scenario_id='SC-02' AND step_index=8`).run();
-  db.prepare(`UPDATE scenario_steps SET step_name='Verify Movement Type = DOMESTIC/EXPORT', expected='MOVEMENT_TYPE refnum = DOMESTIC or EXPORT' WHERE scenario_id='SC-02' AND step_index=9`).run();
-  db.prepare(`UPDATE scenario_steps SET step_name='Verify Delivery Note Number', expected='DELIVERY_NOTE_NUMBER = 0087325725 after TX3' WHERE scenario_id='SC-02' AND step_index=11 AND step_name='Verify Order Indicator = W'`).run();
+  // Migration: replace SC-02 steps with the full 19-step TX1→TX2→TX3→BulkPlan→Planned→Shipments flow
+  const sc02FullDefs = [
+    [0,  'Generate test order ID',              'Order ID generated in format TR_YYYYMMDD_NNN'],
+    [1,  'Upload TX1 to WMServlet',             'TX1 XML POSTed to WMServlet — HTTP 200, no Error element'],
+    [2,  'Verify TX1 accepted',                 'WMServlet accepted TX1 order creation'],
+    [3,  'Login to OTM',                        'OTM home page loaded as LEL7597_TMS'],
+    [4,  'Switch to TURKEY_PLANNER role',       'OTM reloaded under TURKEY_PLANNER role'],
+    [5,  'Navigate to Order Management',        'Order Management > Orders - New finder displayed'],
+    [6,  'Search for TX1 order',                'Order TR_YYYYMMDD_NNN found in Orders - New'],
+    [7,  'Verify Movement Type',                'MOVEMENT_TYPE refnum = DOMESTIC or EXPORT'],
+    [8,  'Verify Equipment Type',               'EQUIPMENT_TYPE refnum = DRY or REEFER'],
+    [9,  'Verify Buy Itinerary = TURKEY_ITINERARY', 'Buy Itinerary Profile = TMS.TURKEY_ITINERARY on Constraints tab'],
+    [10, 'Verify Fixed Itinerary',              'Fixed Itinerary logged (empty for domestic orders)'],
+    [11, 'Upload TX2 modification',             'TX2 XML (RDD +4) POSTed to WMServlet — HTTP 200'],
+    [12, 'Verify TX2 LDD updated',              'Late Delivery Date updated to TX2 RDD in order detail'],
+    [13, 'Upload TX3 delivery note',            'TX3 XML (DN 0087325725) POSTed to WMServlet — HTTP 200'],
+    [14, 'Verify Delivery Note Number',         'DELIVERY_NOTE_NUMBER refnum = 0087325725 in order detail'],
+    [15, 'Verify Bulk Plan COMPLETED',          'Bulk Plan - Buy job status = COMPLETED'],
+    [16, 'Verify Orders Failed to Plan = 0',   'Orders Failed to Plan count = 0 in Bulk Plan results'],
+    [17, 'Verify order in Orders-Planned',      'Order appears in Orders - Planned with PLANNING_PLANNED status'],
+    [18, 'Verify shipment in Shipments-New',    'Buy shipment appears in Shipment Management > Shipments - New'],
+  ];
+  const upsertStep = db.prepare(`INSERT OR REPLACE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES ('SC-02',?,?,?)`);
+  for (const [idx, name, exp] of sc02FullDefs) upsertStep.run(idx, name, exp);
 
   const existingNotifications = db.prepare('SELECT COUNT(*) as c FROM notifications').get();
   if (existingNotifications.c === 0) {

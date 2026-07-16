@@ -446,12 +446,12 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(['DOMESTIC', 'EXPORT'].includes(movType),
       `Expected MOVEMENT_TYPE = DOMESTIC or EXPORT, got: "${movType}"`);
     await objTestUtil.logMessage('INFO', `Movement Type verified: ${movType}`);
-    await saveScreenshot(driver, screenshotsDir, 9);
+    await saveScreenshot(driver, screenshotsDir, 7);
 
     assert.ok(['DRY', 'REEFER'].includes(equipType),
       `Expected EQUIPMENT_TYPE = DRY or REEFER, got: "${equipType}"`);
     await objTestUtil.logMessage('INFO', `Equipment Type verified: ${equipType}`);
-    await saveScreenshot(driver, screenshotsDir, 10);
+    await saveScreenshot(driver, screenshotsDir, 8);
 
     // ── Step 10: Verify LDD is set (Order Release tab, still active) ──────────
     const ldd = await getFieldText(driver, 'Late Delivery Date');
@@ -474,12 +474,12 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(buyItinerary.includes('TURKEY_ITINERARY'),
       `Expected Buy Itinerary Profile = TURKEY_ITINERARY, got: "${buyItinerary}"`);
     await objTestUtil.logMessage('INFO', `Buy Itinerary verified: ${buyItinerary}`);
-    await saveScreenshot(driver, screenshotsDir, 7);
+    await saveScreenshot(driver, screenshotsDir, 9);
 
     // Fixed Itinerary is empty for domestic orders — just log it
     const fixedItinerary = await getFieldText(driver, 'Buy Fixed Itinerary');
     await objTestUtil.logMessage('INFO', `Fixed Itinerary verified: ${fixedItinerary || '(empty — domestic order)'}`);
-    await saveScreenshot(driver, screenshotsDir, 8);
+    await saveScreenshot(driver, screenshotsDir, 10);
 
     // ── Close TX1 order detail window, return to main window ─────────────────
     await driver.switchTo().defaultContent();
@@ -524,6 +524,7 @@ describe('Test_02_TROrderIntegration', function () {
     const tx2Rejected = tx2Res.body.includes('<Error>') || tx2Res.body.toLowerCase().includes('rejected');
     assert.ok(!tx2Rejected, `TX2 WMServlet rejected payload:\n${tx2Res.body.slice(0, 500)}`);
     await objTestUtil.logMessage('INFO', `TX2 accepted - HTTP 200 OK`);
+    await saveScreenshot(driver, screenshotsDir, 11);
 
     // ── Step 13: Wait for OR_MODIFIED_TURKEY_HEAVY_ACTIONS to run ────────────
     await objTestUtil.logMessage('INFO', 'Waiting for modification agent processing');
@@ -602,6 +603,7 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(lddAfterTx2 && lddAfterTx2.startsWith(expectedLddPrefix),
       `Expected LDD to start with ${expectedLddPrefix} after TX2, got: "${lddAfterTx2}"`);
     await objTestUtil.logMessage('INFO', `LDD after TX2 verified: ${lddAfterTx2}`);
+    await saveScreenshot(driver, screenshotsDir, 12);
 
     // ── Close TX2 order detail window, return to main window ─────────────────
     await driver.switchTo().defaultContent();
@@ -647,6 +649,7 @@ describe('Test_02_TROrderIntegration', function () {
     const tx3Rejected = tx3Res.body.includes('<Error>') || tx3Res.body.toLowerCase().includes('rejected');
     assert.ok(!tx3Rejected, `TX3 WMServlet rejected payload:\n${tx3Res.body.slice(0, 500)}`);
     await objTestUtil.logMessage('INFO', `TX3 accepted - HTTP 200 OK`);
+    await saveScreenshot(driver, screenshotsDir, 13);
 
     // ── Step 16: Wait for OR_MODIFIED_TURKEY_HEAVY_ACTIONS (delivery note branch) ─
     await objTestUtil.logMessage('INFO', 'Waiting for delivery note agent processing');
@@ -782,7 +785,7 @@ describe('Test_02_TROrderIntegration', function () {
     assert.equal(dnNumber, TX3_DELIVERY_NOTE,
       `Expected DELIVERY_NOTE_NUMBER = ${TX3_DELIVERY_NOTE}, got: "${dnNumber}"`);
     await objTestUtil.logMessage('INFO', `Delivery Note Number verified: ${dnNumber}`);
-    await saveScreenshot(driver, screenshotsDir, 11);
+    await saveScreenshot(driver, screenshotsDir, 14);
 
     const lddAfterTx3 = await getFieldText(driver, 'Late Delivery Date');
     const tx3Day   = tx3RddDate.substring(6, 8);
@@ -990,6 +993,7 @@ describe('Test_02_TROrderIntegration', function () {
       }
 
       assert.equal(bulkPlanStatus, 'COMPLETED', `Bulk Plan did not complete. Last status: "${bulkPlanStatus}"`);
+      await saveScreenshot(driver, screenshotsDir, 15);
 
       // Assert Orders Failed to Plan = 0
       const failedToPlan = await driver.executeScript(`
@@ -1004,6 +1008,7 @@ describe('Test_02_TROrderIntegration', function () {
       `);
       await objTestUtil.logMessage('INFO', `Orders Failed to Plan: ${failedToPlan}`);
       assert.equal(failedToPlan, '0', `Expected Orders Failed to Plan = 0, got: "${failedToPlan}"`);
+      await saveScreenshot(driver, screenshotsDir, 16);
 
       // Click Shipments Built hyperlink
       const handlesBefore5 = await driver.getAllWindowHandles();
@@ -1122,6 +1127,7 @@ describe('Test_02_TROrderIntegration', function () {
     `);
     await objTestUtil.logMessage('INFO', `Orders-Planned status: ${plannedStatus}`);
     assert.ok(plannedStatus.includes('PLANNING_PLANNED'), `Expected PLANNING_PLANNED status in Orders-Planned, got: "${plannedStatus}"`);
+    await saveScreenshot(driver, screenshotsDir, 17);
 
     // ── Click Home → Shipment Management → Shipments - New → search shipment ─
     await driver.switchTo().defaultContent();
@@ -1186,6 +1192,7 @@ describe('Test_02_TROrderIntegration', function () {
       return link ? link.textContent.trim() : '';
     `, shipIdNumeric);
     await objTestUtil.logMessage('INFO', `Shipment found in Shipments-New: ${shipFound}`);
+    await saveScreenshot(driver, screenshotsDir, 18);
     assert.ok(shipFound && shipFound.indexOf(shipIdNumeric) !== -1,
       `Expected shipment ${shipIdNumeric} in Shipments-New results, got: "${shipFound}"`);
 
