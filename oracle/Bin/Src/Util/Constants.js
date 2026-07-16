@@ -27,7 +27,7 @@ class Constants {
         this.TEST_SCREENSHOT_FOLDER = await path.join(this.PROJECT_FOLDER, "Results", sParentFolder, "Screenshots");
         await CommonFunctions_1.CommonFunctions.createFolder(path.join("Results", sParentFolder), "Logs,Screenshots");
         this.TEST_OBJECT = testObj;
-        this.envConfig = await require(_a.PROJECT_FOLDER + "\\EnvironmentConfig.json");
+        this.envConfig = await require(path.join(_a.PROJECT_FOLDER, "EnvironmentConfig.json"));
         this.sURL = await this.getURL();
         this.sBROWSER = await this.getBrowser();
         this.DBA_USERNAME = await this.envConfig["DBA_USERNAME"];

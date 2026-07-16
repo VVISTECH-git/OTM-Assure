@@ -11,7 +11,7 @@ class Page {
     constructor(browser, LogFile) {
         this.driver = browser;
         this.logFile = LogFile;
-        this.screenShotsFolder = path.join(this.logFile, '..\\..\\Screenshots\\');
+        this.screenShotsFolder = path.join(this.logFile, '..', '..', 'Screenshots', '');
         this.latestScreenShotFileName = "";
     }
     async isDisplayed(byLocator, isSwitchToDefaultContent = false) {
