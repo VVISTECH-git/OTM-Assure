@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const WorkbenchPage_1 = require("../../Src/Pages/WorkbenchPage");
-const CommonFunctions_1 = require("../../Src/util/CommonFunctions");
-const Constants_1 = require("../../Src/util/Constants");
+const CommonFunctions_1 = require("../../Src/Util/CommonFunctions");
+const Constants_1 = require("../../Src/Util/Constants");
 const TestUtil_1 = require("../../Src/Util/TestUtil");
 describe('TEST_17_CreateWorkbench', function () {
     let testUtil;

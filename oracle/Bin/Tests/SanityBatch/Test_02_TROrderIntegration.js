@@ -5,9 +5,9 @@ const fs      = require('fs');
 const path    = require('path');
 const { By, until, Key } = require('selenium-webdriver');
 const { assert } = require('chai');
-const Constants_1       = require('../../Src/util/Constants');
+const Constants_1       = require('../../Src/Util/Constants');
 const TestUtil_1        = require('../../Src/Util/TestUtil');
-const CommonFunctions_1 = require('../../Src/util/CommonFunctions');
+const CommonFunctions_1 = require('../../Src/Util/CommonFunctions');
 const FinderPage_1        = require('../../Src/Pages/FinderPage');
 const FinderResultsPage_1 = require('../../Src/Pages/FinderResultsPage');
 

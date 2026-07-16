@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const FinderPage_1 = require("../../Src/Pages/FinderPage");
-const CommonFunctions_1 = require("../../Src/util/CommonFunctions");
-const Constants_1 = require("../../Src/util/Constants");
+const CommonFunctions_1 = require("../../Src/Util/CommonFunctions");
+const Constants_1 = require("../../Src/Util/Constants");
 const TestUtil_1 = require("../../Src/Util/TestUtil");
 describe('Test_19_NavigateToShipmentFinder', function () {
     let testUtil;
