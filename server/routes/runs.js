@@ -108,6 +108,22 @@ module.exports = function(req, res, url, method, body) {
     return res.json(rows);
   }
 
+  // ── GHA callback: POST /api/gha/runs/:id/screenshot ─────────────────────
+  if (method === 'POST' && url.startsWith('/api/gha/runs/') && url.endsWith('/screenshot')) {
+    if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
+    const runId = url.replace('/api/gha/runs/', '').replace('/screenshot', '');
+    const { scenarioId, stepIndex, data } = body || {};
+    if (!scenarioId || stepIndex == null || !data) return res.status(400).json({ error: 'Missing fields' });
+    try {
+      const dir = path.join(__dirname, '..', '..', 'screenshots', runId, scenarioId);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, `step_${stepIndex}.png`), data, 'base64');
+    } catch (e) {
+      console.error('[Screenshot] Save error:', e.message);
+    }
+    return res.json({ ok: true });
+  }
+
   // ── GHA callback: POST /api/gha/runs/:id/step ────────────────────────────
   if (method === 'POST' && url.startsWith('/api/gha/runs/') && url.endsWith('/step')) {
     if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });

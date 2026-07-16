@@ -126,6 +126,21 @@ function runScenario(runId, scenarioId, scriptFile) {
             apiCall('POST', `/api/gha/runs/${runId}/step`, {
               scenarioId, stepIndex: nextStep, status: 'pass', actual, durationMs: dur
             }).catch(e => console.warn('[Agent] step post failed:', e.message));
+
+            // Upload screenshot for this step if it exists
+            const ssFile = path.join(screenshotsDir, `step_${nextStep}.png`);
+            const capturedStep = nextStep;
+            setTimeout(() => {
+              try {
+                if (fs.existsSync(ssFile)) {
+                  const data = fs.readFileSync(ssFile).toString('base64');
+                  apiCall('POST', `/api/gha/runs/${runId}/screenshot`, {
+                    scenarioId, stepIndex: capturedStep, data
+                  }).catch(e => console.warn('[Agent] screenshot upload failed:', e.message));
+                }
+              } catch {}
+            }, 2000); // delay so test has time to write the file
+
             nextStep++;
             if (nextStep < steps.length) stepStartTimes[nextStep] = Date.now();
           }
@@ -162,6 +177,18 @@ function runScenario(runId, scenarioId, scriptFile) {
           promises.push(apiCall('POST', `/api/gha/runs/${runId}/step`, {
             scenarioId, stepIndex: i, status: 'pass', actual: null, durationMs: 0
           }));
+        }
+        // Upload any screenshots not yet uploaded (steps fired during test completion)
+        for (let i = 0; i < steps.length; i++) {
+          const ssFile = path.join(screenshotsDir, `step_${i}.png`);
+          if (fs.existsSync(ssFile)) {
+            try {
+              const data = fs.readFileSync(ssFile).toString('base64');
+              promises.push(apiCall('POST', `/api/gha/runs/${runId}/screenshot`, {
+                scenarioId, stepIndex: i, data
+              }));
+            } catch {}
+          }
         }
         Promise.all(promises).catch(() => {}).finally(() => resolve(true));
       } else {
