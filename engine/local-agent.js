@@ -120,7 +120,8 @@ function runScenario(runId, scenarioId, scriptFile) {
           if (nextStep >= patterns.length) break;
           const [matchFn, actualFn] = patterns[nextStep];
           if (matchFn(line)) {
-            const actual = actualFn(line);
+            const raw = actualFn(line);
+            const actual = (raw && raw.trim()) || steps[nextStep] || `Step ${nextStep} completed`;
             const dur = Date.now() - stepStartTimes[nextStep];
             console.log(`[Agent] Step ${nextStep} PASS: ${actual}`);
             apiCall('POST', `/api/gha/runs/${runId}/step`, {
@@ -254,15 +255,19 @@ async function poll() {
       const scenarioMap = Object.fromEntries((scenarios || []).map(s => [s.id, s]));
 
       let passed = 0, failed = 0;
+      const scenario_results = [];
       for (const scId of scenarioIds) {
         const sc = scenarioMap[scId];
-        if (!sc) { failed++; continue; }
+        if (!sc) { failed++; scenario_results.push({ scenarioId: scId, status: 'fail', durationMs: 0 }); continue; }
         console.log(`\n[Agent] ===== ${scId}: ${sc.name} =====`);
+        const scStart = Date.now();
         const ok = await runScenario(run.id, scId, sc.script);
+        const scDuration = Date.now() - scStart;
         if (ok) passed++; else failed++;
+        scenario_results.push({ scenarioId: scId, status: ok ? 'pass' : 'fail', durationMs: scDuration });
       }
 
-      await apiCall('POST', `/api/gha/runs/${run.id}/complete`, { passed, failed, total: scenarioIds.length });
+      await apiCall('POST', `/api/gha/runs/${run.id}/complete`, { passed, failed, total: scenarioIds.length, scenario_results });
       console.log(`\n[Agent] Run ${run.id} done — ${passed}/${scenarioIds.length} passed`);
       busy = false;
     }
