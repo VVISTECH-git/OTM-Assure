@@ -1,17 +1,4 @@
 [
-  { "id": "SC-01", "name": "OTM Login",                        "category": "Sanity",        "script": "Test_01_Login.ts",                  "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-02", "name": "TR Order SAP Integration",          "category": "Integration",   "script": "Test_02_TROrderIntegration.ts",     "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-03", "name": "Multi-Supplier Consolidation",     "category": "Shipment",      "script": "Test_03_Consolidation.ts",          "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-04", "name": "Rate Inquiry",                     "category": "Rating",        "script": "Test_04_RateInquiry.ts",            "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-05", "name": "Document Attachment",              "category": "Documents",     "script": "Test_05_DocAttachment.ts",          "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-06", "name": "Outbound Shipment Planning",       "category": "Shipment",      "script": "Test_06_OutboundPlan.ts",           "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-07", "name": "Auto Tender to Carrier",           "category": "Tendering",     "script": "Test_07_AutoTender.ts",             "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-08", "name": "Multi-Stop Shipment",              "category": "Shipment",      "script": "Test_08_MultiStop.ts",              "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-09", "name": "Export Customs Documentation",     "category": "Compliance",    "script": "Test_09_CustomsDocs.ts",            "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-10", "name": "Carrier Rate Comparison",          "category": "Rating",        "script": "Test_10_RateComparison.ts",         "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-11", "name": "Invoice Generation & Approval",    "category": "Finance",       "script": "Test_11_Invoice.ts",                "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-12", "name": "Shipment Milestone Update",        "category": "Visibility",    "script": "Test_12_Milestone.ts",              "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-13", "name": "ERP Inbound Order Integration",    "category": "Integration",   "script": "Test_13_ERPInbound.ts",             "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-14", "name": "ERP Outbound Status Sync",         "category": "Integration",   "script": "Test_14_ERPOutbound.ts",            "status": "active",   "instances": ["DEV","TST","UAT","PRD"] },
-  { "id": "SC-15", "name": "Carrier Performance Report",       "category": "Reporting",     "script": "Test_15_CarrierReport.ts",          "status": "active",   "instances": ["DEV","TST","UAT","PRD"] }
+  { "id": "SC-01", "name": "OTM Login",               "category": "Sanity",      "script": "Test_01_Login.ts",              "status": "active", "instances": ["DEV","TST","UAT","PRD"] },
+  { "id": "SC-02", "name": "TR Order SAP Integration", "category": "Integration", "script": "Test_02_TROrderIntegration.ts", "status": "active", "instances": ["DEV","TST","UAT","PRD"] }
 ]

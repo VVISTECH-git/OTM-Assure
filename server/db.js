@@ -176,15 +176,16 @@ function seed() {
   const scenariosFile = path.join(__dirname, '..', 'scenarios', 'scenarios.json');
   const instancesFile = path.join(__dirname, '..', 'instances', 'instances.json');
 
-  const existingScenarios = db.prepare('SELECT COUNT(*) as c FROM scenarios').get();
-  if (existingScenarios.c === 0) {
-    const scenarios = JSON.parse(fs.readFileSync(scenariosFile, 'utf8'));
-    const ins = db.prepare(`INSERT OR IGNORE INTO scenarios (id,name,category,script,status,instances) VALUES (?,?,?,?,?,?)`);
-    for (const s of scenarios) {
-      ins.run(s.id, s.name, s.category, s.script, s.status, JSON.stringify(s.instances));
-    }
-    console.log(`[DB] Seeded ${scenarios.length} scenarios`);
+  // Always sync scenarios from file — remove stale ones, upsert current ones
+  const scenarios = JSON.parse(fs.readFileSync(scenariosFile, 'utf8'));
+  const validIds = scenarios.map(s => s.id);
+  db.prepare(`DELETE FROM scenarios WHERE id NOT IN (${validIds.map(() => '?').join(',')})`)
+    .run(...validIds);
+  const upsert = db.prepare(`INSERT OR REPLACE INTO scenarios (id,name,category,script,status,instances) VALUES (?,?,?,?,?,?)`);
+  for (const s of scenarios) {
+    upsert.run(s.id, s.name, s.category, s.script, s.status, JSON.stringify(s.instances));
   }
+  console.log(`[DB] Synced ${scenarios.length} scenarios`);
 
   const existingInstances = db.prepare('SELECT COUNT(*) as c FROM instances').get();
   if (existingInstances.c === 0) {
