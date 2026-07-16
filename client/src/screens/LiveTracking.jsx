@@ -129,12 +129,16 @@ export default function LiveTracking({ instance }) {
   const done = passed + failed;
   const total = activeRun?.total || scenarios.length;
 
+  // Only the scenarios that belong to the active run
+  const runScenarioIds = (() => { try { return JSON.parse(activeRun?.scenario_ids || '[]'); } catch { return []; } })();
+  const runScenarios = runScenarioIds.length > 0 ? scenarios.filter(s => runScenarioIds.includes(s.id)) : scenarios;
+
   const allStepsList = Object.values(steps).flat();
   const completedSteps = allStepsList.filter(s => s.status === 'pass' || s.status === 'fail' || s.status === 'skip').length;
   const totalSteps = allStepsList.length;
   const pct = totalSteps > 0 ? Math.round(completedSteps / totalSteps * 100) : (total > 0 ? Math.round(done / total * 100) : 0);
-  const activeScenario = scenarios.find(s => scenarioStatus[s.id] === 'running')
-    || (runStatus === 'completed' ? scenarios[scenarios.length - 1] : null);
+  const activeScenario = runScenarios.find(s => scenarioStatus[s.id] === 'running')
+    || (runStatus === 'completed' ? runScenarios[runScenarios.length - 1] : null);
   const activeSteps = activeScenario ? (steps[activeScenario.id] || []) : allStepsList;
 
   return (
