@@ -42,10 +42,14 @@ jobs:
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@v2
 
-      - name: Start Xvfb (virtual display)
+      - name: Start Xvfb and screen recording
         run: |
-          sudo apt-get install -y xvfb
+          sudo apt-get install -y xvfb ffmpeg
           Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 1
+          mkdir -p oracle/Results/SanityBatch/Videos
+          ffmpeg -f x11grab -r 15 -s 1920x1080 -i :99 -codec:v libx264 -preset ultrafast -crf 28 oracle/Results/SanityBatch/Videos/recording.mp4 &
+          echo "FFMPEG_PID=$!" >> $GITHUB_ENV
           echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Run OTM tests via GHA runner
@@ -57,6 +61,18 @@ jobs:
           GHA_SECRET: ${{ secrets.GHA_SECRET }}
           DISPLAY: ':99'
         run: node engine/gha-runner.js
+
+      - name: Stop screen recording
+        if: always()
+        run: kill $FFMPEG_PID || true && sleep 3
+
+      - name: Upload video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-${{ github.event.inputs.run_id }}
+          path: oracle/Results/SanityBatch/Videos/
+          if-no-files-found: ignore
 
       - name: Upload screenshots
         if: always()
