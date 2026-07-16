@@ -139,10 +139,28 @@ module.exports = function(req, res, url, method, body) {
   if (method === 'POST' && url.startsWith('/api/gha/runs/') && url.endsWith('/complete')) {
     if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
     const runId = url.replace('/api/gha/runs/', '').replace('/complete', '');
-    const { passed, failed, total } = body || {};
+    const { passed, failed, total, scenario_results } = body || {};
     db.prepare(
       `UPDATE runs SET status='completed', completed_at=datetime('now'), passed=?, failed=?, duration_ms=(strftime('%s','now')-strftime('%s',started_at))*1000 WHERE id=?`
     ).run(passed || 0, failed || 0, runId);
+
+    // Update run_results per scenario so dashboard shows correct pass/fail badge
+    if (Array.isArray(scenario_results)) {
+      for (const { scenarioId, status, durationMs } of scenario_results) {
+        db.prepare(`UPDATE run_results SET status=?, completed_at=datetime('now'), duration_ms=? WHERE run_id=? AND scenario_id=?`)
+          .run(status, durationMs || 0, runId, scenarioId);
+      }
+    } else {
+      // Fall back: mark all run_results as pass/fail based on run_steps
+      const scenarioIds = db.prepare('SELECT DISTINCT scenario_id FROM run_results WHERE run_id=?').all(runId).map(r => r.scenario_id);
+      for (const scId of scenarioIds) {
+        const failStep = db.prepare(`SELECT id FROM run_steps WHERE run_id=? AND scenario_id=? AND status='fail'`).get(runId, scId);
+        const status = failStep ? 'fail' : 'pass';
+        db.prepare(`UPDATE run_results SET status=?, completed_at=datetime('now') WHERE run_id=? AND scenario_id=?`)
+          .run(status, runId, scId);
+      }
+    }
+
     db.prepare(`INSERT INTO alert_log (message, type, run_id) VALUES (?,?,?)`)
       .run(`Run ${runId} completed — ${passed}/${total} passed`, failed > 0 ? 'fail' : 'pass', runId);
     broadcast('run:completed', { runId, passed, failed, total });
