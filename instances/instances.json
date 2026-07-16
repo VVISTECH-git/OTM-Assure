@@ -1,0 +1,50 @@
+[
+  {
+    "id": "DEV",
+    "label": "Development",
+    "url": "",
+    "dba_username": "",
+    "dba_password": "",
+    "non_dba_username": "",
+    "non_dba_password": "",
+    "browser": "chrome",
+    "element_timeout": 60000,
+    "active": true
+  },
+  {
+    "id": "TST",
+    "label": "Test",
+    "url": "",
+    "dba_username": "",
+    "dba_password": "",
+    "non_dba_username": "",
+    "non_dba_password": "",
+    "browser": "chrome",
+    "element_timeout": 60000,
+    "active": true
+  },
+  {
+    "id": "UAT",
+    "label": "UAT",
+    "url": "",
+    "dba_username": "",
+    "dba_password": "",
+    "non_dba_username": "",
+    "non_dba_password": "",
+    "browser": "chrome",
+    "element_timeout": 90000,
+    "active": true
+  },
+  {
+    "id": "PRD",
+    "label": "Production",
+    "url": "",
+    "dba_username": "",
+    "dba_password": "",
+    "non_dba_username": "",
+    "non_dba_password": "",
+    "browser": "chrome",
+    "element_timeout": 120000,
+    "active": true
+  }
+]

@@ -4,7 +4,7 @@ node_modules/
 *.db-wal
 oracle/Results/
 screenshots/
-instances/
+instances/*.db
 uploads/
 server-out.txt
 .env
