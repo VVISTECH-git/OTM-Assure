@@ -176,7 +176,12 @@ export default function LiveTracking({ instance }) {
           {scenarios.length === 0 && (
             <div style={{ padding: '1rem', fontSize: 12, color: 'var(--text-hint)' }}>Loading…</div>
           )}
-          {scenarios.map(s => {
+          {(activeRun?.scenario_ids
+            ? scenarios.filter(s => {
+                try { return JSON.parse(activeRun.scenario_ids).includes(s.id); } catch { return true; }
+              })
+            : scenarios
+          ).map(s => {
             const st = scenarioStatus[s.id];
             const icon = !st ? 'ti-clock' : st === 'running' ? 'ti-loader-2' : st === 'pass' ? 'ti-circle-check' : 'ti-alert-circle';
             const color = !st ? 'var(--text-hint)' : st === 'running' ? 'var(--amber)' : st === 'pass' ? 'var(--green)' : 'var(--red)';
