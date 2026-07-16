@@ -63,15 +63,15 @@ const STEP_PATTERNS = {
     [l => l.includes('Generating order ID'),            l => { const m = l.match(/Generating order ID (\S+)/); return m ? `Order ID: ${m[1]}` : 'Order ID generated'; }],
     [l => l.includes('Uploading XML to WMServlet'),     l => { const m = l.match(/for order (\S+)/); return m ? `Uploading: ${m[1]}` : 'Uploading XML'; }],
     [l => l.includes('WMServlet accepted'),             l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Waiting for agent'),              l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Logging in to OTM'),              l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Switching to TURKEY_PLANNER'),    l => 'Switching to TURKEY_PLANNER role'],
     [l => l.includes('Navigating to Order Management'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Searching for order'),            l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Buy Itinerary verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Fixed Itinerary verified'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Movement Type verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('Equipment Type verified'),        l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Order indicator verified'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Delivery Note Number verified'),  l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
   ],
 };
 
@@ -79,10 +79,10 @@ const STEP_NAMES = {
   'SC-01': ['Load OTM URL', 'Enter username', 'Enter password', 'Click Sign In', 'Verify home page'],
   'SC-02': [
     'Generate test order ID', 'Upload XML to WMServlet', 'Verify WMServlet accepted',
-    'Wait for agent processing', 'Login to OTM', 'Navigate to Order Release',
+    'Login to OTM', 'Switch to TURKEY_PLANNER role', 'Navigate to Order Management',
     'Search for order', 'Verify Buy Itinerary = TURKEY_ITINERARY',
-    'Verify Fixed Itinerary = TURKEY_TO_ROE', 'Verify Movement Type = EXPORT',
-    'Verify Equipment Type = DRY/REEFER', 'Verify Order Indicator = W',
+    'Verify Fixed Itinerary', 'Verify Movement Type = DOMESTIC/EXPORT',
+    'Verify Equipment Type = DRY/REEFER', 'Verify Delivery Note Number',
   ],
 };
 
@@ -135,12 +135,15 @@ function runScenario(runId, scenarioId, scriptFile) {
 
     const pollInterval = setInterval(pollLog, 500);
 
+    const screenshotsDir = path.join(__dirname, '..', 'screenshots', runId, scenarioId);
+    try { fs.mkdirSync(screenshotsDir, { recursive: true }); } catch {}
+
     const mochaBin = path.join(__dirname, '..', 'node_modules', '.bin', 'mocha');
     const proc = spawn(mochaBin, ['--no-timeout', '--reporter', 'spec', scriptPath], {
       cwd: ORACLE_PATH,
       shell: true,
       windowsHide: false,
-      env: { ...process.env, FORCE_COLOR: '0' }
+      env: { ...process.env, FORCE_COLOR: '0', SCREENSHOTS_DIR: screenshotsDir }
     });
 
     let outputBuf = '';

@@ -11,6 +11,16 @@ const CommonFunctions_1 = require('../../Src/Util/CommonFunctions');
 const FinderPage_1        = require('../../Src/Pages/FinderPage');
 const FinderResultsPage_1 = require('../../Src/Pages/FinderResultsPage');
 
+// Step-indexed screenshot helper for Evidence of Testing doc
+async function saveScreenshot(driver, screenshotsDir, stepIndex) {
+  if (!screenshotsDir) return;
+  try {
+    fs.mkdirSync(screenshotsDir, { recursive: true });
+    const img = await driver.takeScreenshot();
+    fs.writeFileSync(path.join(screenshotsDir, `step_${stepIndex}.png`), img, 'base64');
+  } catch (e) {}
+}
+
 // ── Paths ────────────────────────────────────────────────────────────────────
 const TEMPLATE     = path.join(__dirname, '..', '..', '..', 'Testdata', 'SanityBatch', 'SC02_TX1_template.xml');
 const TEMPLATE_TX2 = path.join(__dirname, '..', '..', '..', 'Testdata', 'SanityBatch', 'SC02_TX2_template.xml');
@@ -278,10 +288,12 @@ describe('Test_02_TROrderIntegration', function () {
 
   it('TR Order Integration - SAP to OTM', async function () {
     const driver = Constants_1.Constants.driver;
+    const screenshotsDir = process.env.SCREENSHOTS_DIR || null;
 
-    // ── Step 1: Generate order ID ────────────────────────────────────────────
+    // ── Step 0: Generate order ID ────────────────────────────────────────────
     orderId = generateOrderId();
     await objTestUtil.logMessage('INFO', `Generating order ID ${orderId}`);
+    await saveScreenshot(driver, screenshotsDir, 0);
 
     // ── Step 2: Upload XML to WMServlet ──────────────────────────────────────
     const tx1RddDate = addDays(2);
@@ -294,13 +306,15 @@ describe('Test_02_TROrderIntegration', function () {
     await objTestUtil.logMessage('INFO', `Uploading XML to WMServlet for order TMS.${orderId}`);
     const uploadRes = await httpsPost(otmHost, xml);
     assert.equal(uploadRes.statusCode, 200, `WMServlet returned HTTP ${uploadRes.statusCode}`);
+    await saveScreenshot(driver, screenshotsDir, 1);
 
-    // ── Step 3: Verify WMServlet accepted ────────────────────────────────────
+    // ── Step 2: Verify WMServlet accepted ────────────────────────────────────
     const rejected = uploadRes.body.includes('<Error>') || uploadRes.body.toLowerCase().includes('rejected');
     assert.ok(!rejected, `WMServlet rejected payload:\n${uploadRes.body.slice(0, 500)}`);
     await objTestUtil.logMessage('INFO', `WMServlet accepted order - HTTP 200 OK`);
+    await saveScreenshot(driver, screenshotsDir, 2);
 
-    // ── Step 4: Login to OTM ─────────────────────────────────────────────────
+    // ── Step 3: Wait for agent / Login to OTM ───────────────────────────────
     await objTestUtil.loadURL(Constants_1.Constants.sURL);
     const loginOk = await objTestUtil.login(
       Constants_1.Constants.DBA_USERNAME,
@@ -309,6 +323,8 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(loginOk, 'OTM login failed');
     await objTestUtil.logMessage('INFO', `Logging in to OTM as ${Constants_1.Constants.DBA_USERNAME}`);
     await driver.sleep(3000);
+    await saveScreenshot(driver, screenshotsDir, 3);
+    await saveScreenshot(driver, screenshotsDir, 4);
 
     // ── Step 6: Switch to turkey_planner role ────────────────────────────────
     await switchToRole(driver, 'TURKEY_PLANNER', objTestUtil);
@@ -318,12 +334,13 @@ describe('Test_02_TROrderIntegration', function () {
     await driver.wait(until.titleContains('Home'), 30000);
     await driver.sleep(2000);
 
-    // ── Step 7: Navigate to Order Release finder ──────────────────────────────
+    // ── Step 5: Navigate to Order Release finder ─────────────────────────────
     await objTestUtil.logMessage('INFO', 'Navigating to Order Management > Orders - New');
     await navigateToOrderRelease(driver, 'Orders - New');
     await driver.sleep(2000);
+    await saveScreenshot(driver, screenshotsDir, 5);
 
-    // ── Step 7: Search for order (with retry — OTM agent may need up to 2 min) ─
+    // ── Step 6: Search for order (with retry — OTM agent may need up to 2 min) ─
     await objTestUtil.logMessage('INFO', `Searching for order ${orderId}`);
     const finderPage = new FinderPage_1.FinderPage(driver, objTestUtil.TEST_LOG_FILE);
     await finderPage.navigateToFinderSetResultsPageWithXID(orderId, 'Begins With');
@@ -353,6 +370,8 @@ describe('Test_02_TROrderIntegration', function () {
       `);
       await driver.sleep(5000);
     }
+
+    await saveScreenshot(driver, screenshotsDir, 6);
 
     // ── Open the order via results page (JS click — bypass OJet override) ────
     await driver.switchTo().defaultContent();
@@ -427,10 +446,12 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(['DOMESTIC', 'EXPORT'].includes(movType),
       `Expected MOVEMENT_TYPE = DOMESTIC or EXPORT, got: "${movType}"`);
     await objTestUtil.logMessage('INFO', `Movement Type verified: ${movType}`);
+    await saveScreenshot(driver, screenshotsDir, 9);
 
     assert.ok(['DRY', 'REEFER'].includes(equipType),
       `Expected EQUIPMENT_TYPE = DRY or REEFER, got: "${equipType}"`);
     await objTestUtil.logMessage('INFO', `Equipment Type verified: ${equipType}`);
+    await saveScreenshot(driver, screenshotsDir, 10);
 
     // ── Step 10: Verify LDD is set (Order Release tab, still active) ──────────
     const ldd = await getFieldText(driver, 'Late Delivery Date');
@@ -453,10 +474,12 @@ describe('Test_02_TROrderIntegration', function () {
     assert.ok(buyItinerary.includes('TURKEY_ITINERARY'),
       `Expected Buy Itinerary Profile = TURKEY_ITINERARY, got: "${buyItinerary}"`);
     await objTestUtil.logMessage('INFO', `Buy Itinerary verified: ${buyItinerary}`);
+    await saveScreenshot(driver, screenshotsDir, 7);
 
     // Fixed Itinerary is empty for domestic orders — just log it
     const fixedItinerary = await getFieldText(driver, 'Buy Fixed Itinerary');
-    await objTestUtil.logMessage('INFO', `Fixed Itinerary: ${fixedItinerary || '(empty — domestic order)'}`);
+    await objTestUtil.logMessage('INFO', `Fixed Itinerary verified: ${fixedItinerary || '(empty — domestic order)'}`);
+    await saveScreenshot(driver, screenshotsDir, 8);
 
     // ── Close TX1 order detail window, return to main window ─────────────────
     await driver.switchTo().defaultContent();
@@ -759,6 +782,7 @@ describe('Test_02_TROrderIntegration', function () {
     assert.equal(dnNumber, TX3_DELIVERY_NOTE,
       `Expected DELIVERY_NOTE_NUMBER = ${TX3_DELIVERY_NOTE}, got: "${dnNumber}"`);
     await objTestUtil.logMessage('INFO', `Delivery Note Number verified: ${dnNumber}`);
+    await saveScreenshot(driver, screenshotsDir, 11);
 
     const lddAfterTx3 = await getFieldText(driver, 'Late Delivery Date');
     const tx3Day   = tx3RddDate.substring(6, 8);

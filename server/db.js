@@ -255,6 +255,14 @@ function seed() {
     console.log('[DB] Seeded SC-02 step definitions');
   }
 
+  // Migration: update SC-02 step names to match current test implementation
+  db.prepare(`UPDATE scenario_steps SET step_name='Login to OTM', expected='OTM home page loaded as LEL7597_TMS' WHERE scenario_id='SC-02' AND step_index=3 AND step_name='Wait for agent processing'`).run();
+  db.prepare(`UPDATE scenario_steps SET step_name='Switch to TURKEY_PLANNER role', expected='OTM reloaded under TURKEY_PLANNER role' WHERE scenario_id='SC-02' AND step_index=4 AND step_name='Login to OTM'`).run();
+  db.prepare(`UPDATE scenario_steps SET step_name='Navigate to Order Management', expected='Order Management > Orders - New finder displayed' WHERE scenario_id='SC-02' AND step_index=5`).run();
+  db.prepare(`UPDATE scenario_steps SET step_name='Verify Fixed Itinerary', expected='Fixed Itinerary logged (empty for domestic orders)' WHERE scenario_id='SC-02' AND step_index=8`).run();
+  db.prepare(`UPDATE scenario_steps SET step_name='Verify Movement Type = DOMESTIC/EXPORT', expected='MOVEMENT_TYPE refnum = DOMESTIC or EXPORT' WHERE scenario_id='SC-02' AND step_index=9`).run();
+  db.prepare(`UPDATE scenario_steps SET step_name='Verify Delivery Note Number', expected='DELIVERY_NOTE_NUMBER = 0087325725 after TX3' WHERE scenario_id='SC-02' AND step_index=11 AND step_name='Verify Order Indicator = W'`).run();
+
   const existingNotifications = db.prepare('SELECT COUNT(*) as c FROM notifications').get();
   if (existingNotifications.c === 0) {
     const defaultRules = [
