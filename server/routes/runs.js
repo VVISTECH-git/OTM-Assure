@@ -2,6 +2,10 @@ const db = require('../db');
 const { generateEvidenceDoc } = require('../evidence');
 const { v4: uuidv4 } = require('uuid');
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
+const INSTANCES_FILE = path.join(__dirname, '..', '..', 'instances', 'instances.json');
 
 let startRun, getSSEClients;
 try {
@@ -84,8 +88,16 @@ module.exports = function(req, res, url, method, body) {
   if (method === 'GET' && url.startsWith('/api/gha/instance/')) {
     if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
     const instId = url.replace('/api/gha/instance/', '');
-    const inst = db.prepare('SELECT * FROM instances WHERE id=?').get(instId);
-    if (!inst) return res.status(404).json({ error: 'Instance not found' });
+    let inst = db.prepare('SELECT * FROM instances WHERE id=?').get(instId);
+    // Fall back to instances.json if DB row has no URL (Render DB reset on redeploy)
+    if (!inst || !inst.url) {
+      try {
+        const all = JSON.parse(fs.readFileSync(INSTANCES_FILE, 'utf8'));
+        const fromFile = all.find(i => i.id === instId);
+        if (fromFile && fromFile.url) inst = { ...inst, ...fromFile };
+      } catch {}
+    }
+    if (!inst || !inst.url) return res.status(404).json({ error: 'Instance not found or URL not configured' });
     return res.json(inst);
   }
 
