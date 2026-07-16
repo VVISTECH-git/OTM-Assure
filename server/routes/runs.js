@@ -108,6 +108,16 @@ module.exports = function(req, res, url, method, body) {
     return res.json(rows);
   }
 
+  // ── GHA callback: POST /api/gha/runs/:id/claim (atomic — only first agent wins) ──
+  if (method === 'POST' && url.startsWith('/api/gha/runs/') && url.endsWith('/claim')) {
+    if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
+    const runId = url.replace('/api/gha/runs/', '').replace('/claim', '');
+    const result = db.prepare(
+      `UPDATE runs SET status='claimed' WHERE id=? AND status='running'`
+    ).run(runId);
+    return res.json({ claimed: result.changes === 1 });
+  }
+
   // ── GHA callback: POST /api/gha/runs/:id/screenshot ─────────────────────
   if (method === 'POST' && url.startsWith('/api/gha/runs/') && url.endsWith('/screenshot')) {
     if (!isGhaAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
@@ -288,7 +298,7 @@ module.exports = function(req, res, url, method, body) {
 
   // ── Stop a run: POST /api/runs/:id/stop ──────────────────────────────────
   if (method === 'POST' && id && sub === 'stop') {
-    db.prepare(`UPDATE runs SET status='stopped', completed_at=datetime('now') WHERE id=? AND status='running'`).run(id);
+    db.prepare(`UPDATE runs SET status='stopped', completed_at=datetime('now') WHERE id=? AND status IN ('running','claimed')`).run(id);
     return res.json({ ok: true });
   }
 

@@ -235,7 +235,13 @@ async function poll() {
 
     for (const run of runs) {
       const scenarioIds = JSON.parse(run.scenario_ids || '[]');
-      console.log(`\n[Agent] Picked up run ${run.id} | Instance: ${run.instance_id} | Scenarios: ${scenarioIds.join(', ')}`);
+      // Atomically claim the run — if another agent already claimed it, skip
+      const claim = await apiCall('POST', `/api/gha/runs/${run.id}/claim`, {});
+      if (!claim.claimed) {
+        console.log(`[Agent] Run ${run.id} already claimed by another agent — skipping`);
+        continue;
+      }
+      console.log(`\n[Agent] Claimed run ${run.id} | Instance: ${run.instance_id} | Scenarios: ${scenarioIds.join(', ')}`);
       busy = true;
 
       // Fetch instance config
