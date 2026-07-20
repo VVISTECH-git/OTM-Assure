@@ -140,14 +140,67 @@ const STEP_PATTERNS = {
 const STEP_NAMES = {
   'SC-01': ['Load OTM URL', 'Enter username', 'Enter password', 'Click Sign In', 'Verify home page'],
   'SC-02': [
-    'Generate test order ID', 'Upload TX1 to WMServlet', 'Verify TX1 accepted',
-    'Login to OTM', 'Switch to TURKEY_PLANNER role', 'Navigate to Order Management',
-    'Search for TX1 order', 'Verify Movement Type', 'Verify Equipment Type',
-    'Verify Buy Itinerary = TURKEY_ITINERARY', 'Verify Fixed Itinerary',
-    'Upload TX2 modification', 'Verify TX2 LDD updated',
-    'Upload TX3 delivery note', 'Verify Delivery Note Number',
-    'Verify Bulk Plan COMPLETED', 'Verify Orders Failed to Plan = 0',
-    'Verify order in Orders-Planned', 'Verify shipment in Shipments-New',
+    'Generate test order ID',           // 0
+    'Upload TX1 to WMServlet',          // 1
+    'Verify TX1 accepted',              // 2
+    'Login to OTM',                     // 3
+    'Switch to TURKEY_PLANNER role',    // 4
+    'Navigate to Order Management',     // 5
+    'Verify Movement Type',             // 6
+    'Verify Equipment Type',            // 7
+    'Verify LDD (TX1)',                 // 8
+    'Verify Buy Itinerary = TURKEY_ITINERARY', // 9
+    'Verify Fixed Itinerary',           // 10
+    'Post TX2 RDD modification',        // 11
+    'Verify TX2 accepted',              // 12
+    'Verify LDD after TX2',             // 13
+    'Post TX3 delivery note',           // 14
+    'Verify TX3 accepted',              // 15
+    'Verify Delivery Note Number',      // 16
+    'Verify LDD after TX3',             // 17
+    'Verify order in Orders - Unplanned', // 18
+    'Initiate Bulk Plan - Buy',         // 19
+    'Verify Bulk Plan COMPLETED',       // 20
+    'Capture Shipment ID',              // 21
+    'Verify order status = PLANNING_PLANNED', // 22
+    'Verify shipment in Shipments-New', // 23
+    'Click Approve for Execution',      // 24
+    'Approve for Execution done',       // 25
+    'Verify shipment in Sent-to-Carrier', // 26
+    'Verify Orange indicator',          // 27
+    'Sign out LEL7597_TMS',             // 28
+    'Login as TR_TST_CARRIER',          // 29
+    'Navigate to Shipments - Review',   // 30
+    'Select shipment checkbox',         // 31
+    'Enter Driver Name',                // 32
+    'Enter Trailer Number',             // 33
+    'Enter Truck Number',               // 34
+    'Enter Driver Phone',               // 35
+    'Enter Appointment Time',           // 36
+    'Enter Carrier Remarks',            // 37
+    'Save Mass Update',                 // 38
+    'Verify Driver Name saved',         // 39
+    'Verify Trailer Number saved',      // 40
+    'Verify Truck Number saved',        // 41
+    'Verify Driver Phone saved',        // 42
+    'Verify Appointment Time saved',    // 43
+    'Verify Carrier Remarks saved',     // 44
+    'Switch to KHC_WAREHOUSE role',     // 45
+    'Load Shipments page',              // 46
+    'Search shipment in KHC_WAREHOUSE', // 47
+    'Open Upload Document popup',       // 48
+    'Upload Batch List document',       // 49
+    'Set document type to BATCH_LIST',  // 50
+    'Add Gate_In tracking event',       // 51
+    'Verify Gate_In in tracking events',// 52
+    'Add Load_Start tracking event',    // 53
+    'Verify Load_Start in tracking events', // 54
+    'Add Load_End tracking event',      // 55
+    'Verify Load_End in tracking events', // 56
+    'Post PGI XML (HTTP 200)',          // 57
+    'Add Gate_Out tracking event',      // 58
+    'Verify Gate_Out in tracking events', // 59
+    'Sign out LEL7597_TMS (end)',       // 60
   ],
 };
 

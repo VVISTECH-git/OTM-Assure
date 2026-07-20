@@ -237,39 +237,94 @@ function seed() {
       ['SC-02', 16, 'Verify Orders Failed to Plan = 0',   'Orders Failed to Plan count = 0 in Bulk Plan results'],
       ['SC-02', 17, 'Verify order in Orders-Planned',      'Order appears in Orders - Planned with PLANNING_PLANNED status'],
       ['SC-02', 18, 'Verify shipment in Shipments-New',    'Buy shipment appears in Shipment Management > Shipments - New'],
+      ['SC-02', 19, 'Click Approve for Execution',         'Approve for Execution action triggered from Actions menu'],
+      ['SC-02', 20, 'Approve for Execution done',          'Shipment tender results popup closed — execution approved'],
+      ['SC-02', 21, 'Verify shipment in Sent-to-Carrier',  'Shipment appears in Shipments - Sent to Carrier view'],
+      ['SC-02', 22, 'Verify Orange indicator',             'Orange indicator confirms shipment sent to carrier'],
+      ['SC-02', 23, 'Sign out LEL7597_TMS',                'LEL7597_TMS signed out — returned to Oracle Cloud login'],
+      ['SC-02', 24, 'Login as TR_TST_CARRIER',             'Carrier portal home loaded as TR_TST_CARRIER'],
+      ['SC-02', 25, 'Navigate to Shipments - Review',      'Shipments - Review finder displayed in Carrier Portal'],
+      ['SC-02', 26, 'Select shipment checkbox',            'Target shipment checkbox selected in results grid'],
+      ['SC-02', 27, 'Enter Driver Name',                   'Driver Name field populated: JOHN DOE'],
+      ['SC-02', 28, 'Enter Trailer Number',                'Trailer Number field populated: TRL 001'],
+      ['SC-02', 29, 'Enter Truck Number',                  'Truck Number field populated: TRC 001'],
+      ['SC-02', 30, 'Enter Driver Phone',                  'Driver Phone field populated: 0123456789'],
+      ['SC-02', 31, 'Enter Appointment Time',              'Appointment Time field populated: 11:30'],
+      ['SC-02', 32, 'Enter Carrier Remarks',               'Carrier Remarks populated: I WILL COME ON TIME'],
+      ['SC-02', 33, 'Save Mass Update',                    'Mass Update saved — green checkmark confirmed'],
+      ['SC-02', 34, 'Verify Driver Name saved',            'Driver Name "JOHN DOE" visible in results grid'],
+      ['SC-02', 35, 'Verify Trailer Number saved',         'Trailer Number "TRL 001" visible in results grid'],
+      ['SC-02', 36, 'Verify Truck Number saved',           'Truck Number "TRC 001" visible in results grid'],
+      ['SC-02', 37, 'Verify Driver Phone saved',           'Driver Phone "0123456789" visible in results grid'],
+      ['SC-02', 38, 'Verify Appointment Time saved',       'Appointment Time "11:30" visible in results grid'],
+      ['SC-02', 39, 'Verify Carrier Remarks saved',        'Carrier Remarks visible in results grid'],
+      ['SC-02', 40, 'Switch to KHC_WAREHOUSE role',        'OTM reloaded under KHC_WAREHOUSE role'],
+      ['SC-02', 41, 'Load Shipments page',                 'Shipments page loaded — mainIFrame ready'],
+      ['SC-02', 42, 'Search shipment in KHC_WAREHOUSE',    'Shipment found via Refine Query in KHC_WAREHOUSE'],
+      ['SC-02', 43, 'Open Upload Document popup',          'Upload Document popup opened from Actions menu'],
+      ['SC-02', 44, 'Upload Batch List document',          'Batch List.docx uploaded successfully'],
+      ['SC-02', 45, 'Set document type to BATCH_LIST',     'Document type updated to BATCH_LIST'],
+      ['SC-02', 46, 'Add Gate_In tracking event',          'Gate_In (TMS.GI) event created successfully'],
+      ['SC-02', 47, 'Verify Gate_In in tracking events',   'Gate_In visible in View Tracking Events popup'],
+      ['SC-02', 48, 'Add Load_Start tracking event',       'Load_Start (TMS.LS) event created successfully'],
+      ['SC-02', 49, 'Verify Load_Start in tracking events','Load_Start visible in View Tracking Events popup'],
+      ['SC-02', 50, 'Add Load_End tracking event',         'Load_End (TMS.LE) event created successfully'],
+      ['SC-02', 51, 'Verify Load_End in tracking events',  'Load_End visible in View Tracking Events popup'],
+      ['SC-02', 52, 'Post PGI XML (HTTP 200)',             'PGI XML posted to WMServlet — HTTP 200 TransmissionAck'],
+      ['SC-02', 53, 'Add Gate_Out tracking event',         'Gate_Out (TMS.GO) event created successfully'],
+      ['SC-02', 54, 'Verify Gate_Out in tracking events',  'Gate_Out visible in View Tracking Events popup'],
+      ['SC-02', 55, 'Sign out LEL7597_TMS',                'LEL7597_TMS signed out — end of SC-02'],
     ];
     const ins = db.prepare(`INSERT OR IGNORE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES (?,?,?,?)`);
     for (const s of stepDefs) ins.run(...s);
     console.log('[DB] Seeded scenario step definitions');
   }
 
-  // Migration: ensure SC-02 steps exist even if steps were seeded before SC-02 was added
+  // Migration: ensure SC-02 has all 56 steps (19-55 added in Phase 13/14 expansion)
   const sc02Steps = db.prepare('SELECT COUNT(*) as c FROM scenario_steps WHERE scenario_id=?').get('SC-02');
-  if (sc02Steps.c === 0) {
-    const sc02Defs = [
-      ['SC-02',  0, 'Generate test order ID',              'Order ID generated in format TR_YYYYMMDD_NNN'],
-      ['SC-02',  1, 'Upload TX1 to WMServlet',             'TX1 XML POSTed to WMServlet — HTTP 200, no Error element'],
-      ['SC-02',  2, 'Verify TX1 accepted',                 'WMServlet accepted TX1 order creation'],
-      ['SC-02',  3, 'Login to OTM',                        'OTM home page loaded as LEL7597_TMS'],
-      ['SC-02',  4, 'Switch to TURKEY_PLANNER role',       'OTM reloaded under TURKEY_PLANNER role'],
-      ['SC-02',  5, 'Navigate to Order Management',        'Order Management > Orders - New finder displayed'],
-      ['SC-02',  6, 'Search for TX1 order',                'Order TR_YYYYMMDD_NNN found in Orders - New'],
-      ['SC-02',  7, 'Verify Movement Type',                'MOVEMENT_TYPE refnum = DOMESTIC or EXPORT'],
-      ['SC-02',  8, 'Verify Equipment Type',               'EQUIPMENT_TYPE refnum = DRY or REEFER'],
-      ['SC-02',  9, 'Verify Buy Itinerary = TURKEY_ITINERARY', 'Buy Itinerary Profile = TMS.TURKEY_ITINERARY on Constraints tab'],
-      ['SC-02', 10, 'Verify Fixed Itinerary',              'Fixed Itinerary logged (empty for domestic orders)'],
-      ['SC-02', 11, 'Upload TX2 modification',             'TX2 XML (RDD +4) POSTed to WMServlet — HTTP 200'],
-      ['SC-02', 12, 'Verify TX2 LDD updated',              'Late Delivery Date updated to TX2 RDD in order detail'],
-      ['SC-02', 13, 'Upload TX3 delivery note',            'TX3 XML (DN 0087325725) POSTed to WMServlet — HTTP 200'],
-      ['SC-02', 14, 'Verify Delivery Note Number',         'DELIVERY_NOTE_NUMBER refnum = 0087325725 in order detail'],
-      ['SC-02', 15, 'Verify Bulk Plan COMPLETED',          'Bulk Plan - Buy job status = COMPLETED'],
-      ['SC-02', 16, 'Verify Orders Failed to Plan = 0',   'Orders Failed to Plan count = 0 in Bulk Plan results'],
-      ['SC-02', 17, 'Verify order in Orders-Planned',      'Order appears in Orders - Planned with PLANNING_PLANNED status'],
-      ['SC-02', 18, 'Verify shipment in Shipments-New',    'Buy shipment appears in Shipment Management > Shipments - New'],
+  if (sc02Steps.c < 56) {
+    const sc02Extra = [
+      ['SC-02', 19, 'Click Approve for Execution',         'Approve for Execution action triggered from Actions menu'],
+      ['SC-02', 20, 'Approve for Execution done',          'Shipment tender results popup closed — execution approved'],
+      ['SC-02', 21, 'Verify shipment in Sent-to-Carrier',  'Shipment appears in Shipments - Sent to Carrier view'],
+      ['SC-02', 22, 'Verify Orange indicator',             'Orange indicator confirms shipment sent to carrier'],
+      ['SC-02', 23, 'Sign out LEL7597_TMS',                'LEL7597_TMS signed out — returned to Oracle Cloud login'],
+      ['SC-02', 24, 'Login as TR_TST_CARRIER',             'Carrier portal home loaded as TR_TST_CARRIER'],
+      ['SC-02', 25, 'Navigate to Shipments - Review',      'Shipments - Review finder displayed in Carrier Portal'],
+      ['SC-02', 26, 'Select shipment checkbox',            'Target shipment checkbox selected in results grid'],
+      ['SC-02', 27, 'Enter Driver Name',                   'Driver Name field populated: JOHN DOE'],
+      ['SC-02', 28, 'Enter Trailer Number',                'Trailer Number field populated: TRL 001'],
+      ['SC-02', 29, 'Enter Truck Number',                  'Truck Number field populated: TRC 001'],
+      ['SC-02', 30, 'Enter Driver Phone',                  'Driver Phone field populated: 0123456789'],
+      ['SC-02', 31, 'Enter Appointment Time',              'Appointment Time field populated: 11:30'],
+      ['SC-02', 32, 'Enter Carrier Remarks',               'Carrier Remarks populated: I WILL COME ON TIME'],
+      ['SC-02', 33, 'Save Mass Update',                    'Mass Update saved — green checkmark confirmed'],
+      ['SC-02', 34, 'Verify Driver Name saved',            'Driver Name "JOHN DOE" visible in results grid'],
+      ['SC-02', 35, 'Verify Trailer Number saved',         'Trailer Number "TRL 001" visible in results grid'],
+      ['SC-02', 36, 'Verify Truck Number saved',           'Truck Number "TRC 001" visible in results grid'],
+      ['SC-02', 37, 'Verify Driver Phone saved',           'Driver Phone "0123456789" visible in results grid'],
+      ['SC-02', 38, 'Verify Appointment Time saved',       'Appointment Time "11:30" visible in results grid'],
+      ['SC-02', 39, 'Verify Carrier Remarks saved',        'Carrier Remarks visible in results grid'],
+      ['SC-02', 40, 'Switch to KHC_WAREHOUSE role',        'OTM reloaded under KHC_WAREHOUSE role'],
+      ['SC-02', 41, 'Load Shipments page',                 'Shipments page loaded — mainIFrame ready'],
+      ['SC-02', 42, 'Search shipment in KHC_WAREHOUSE',    'Shipment found via Refine Query in KHC_WAREHOUSE'],
+      ['SC-02', 43, 'Open Upload Document popup',          'Upload Document popup opened from Actions menu'],
+      ['SC-02', 44, 'Upload Batch List document',          'Batch List.docx uploaded successfully'],
+      ['SC-02', 45, 'Set document type to BATCH_LIST',     'Document type updated to BATCH_LIST'],
+      ['SC-02', 46, 'Add Gate_In tracking event',          'Gate_In (TMS.GI) event created successfully'],
+      ['SC-02', 47, 'Verify Gate_In in tracking events',   'Gate_In visible in View Tracking Events popup'],
+      ['SC-02', 48, 'Add Load_Start tracking event',       'Load_Start (TMS.LS) event created successfully'],
+      ['SC-02', 49, 'Verify Load_Start in tracking events','Load_Start visible in View Tracking Events popup'],
+      ['SC-02', 50, 'Add Load_End tracking event',         'Load_End (TMS.LE) event created successfully'],
+      ['SC-02', 51, 'Verify Load_End in tracking events',  'Load_End visible in View Tracking Events popup'],
+      ['SC-02', 52, 'Post PGI XML (HTTP 200)',             'PGI XML posted to WMServlet — HTTP 200 TransmissionAck'],
+      ['SC-02', 53, 'Add Gate_Out tracking event',         'Gate_Out (TMS.GO) event created successfully'],
+      ['SC-02', 54, 'Verify Gate_Out in tracking events',  'Gate_Out visible in View Tracking Events popup'],
+      ['SC-02', 55, 'Sign out LEL7597_TMS',                'LEL7597_TMS signed out — end of SC-02'],
     ];
     const ins = db.prepare(`INSERT OR IGNORE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES (?,?,?,?)`);
-    for (const s of sc02Defs) ins.run(...s);
-    console.log('[DB] Seeded SC-02 step definitions');
+    for (const s of sc02Extra) ins.run(...s);
+    console.log('[DB] Migrated SC-02 to 56 steps (added Phase 13/14)');
   }
 
   // Migration: replace SC-02 steps with the full 19-step TX1→TX2→TX3→BulkPlan→Planned→Shipments flow
