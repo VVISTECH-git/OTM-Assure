@@ -52,11 +52,22 @@ export default function Layout({ user, instance, children }) {
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Sidebar */}
-        <div style={{ width: 52, background: 'var(--surface)', borderRight: '0.5px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0.75rem 0', gap: '1.25rem', flexShrink: 0, overflowY: 'auto' }}>
+        <div style={{ width: 160, background: 'var(--surface)', borderRight: '0.5px solid var(--border)', display: 'flex', flexDirection: 'column', padding: '0.75rem 0', gap: '2px', flexShrink: 0, overflowY: 'auto' }}>
           {NAV.map(n => (
             <NavLink key={n.to} to={n.to} title={n.label}
-              style={({ isActive }) => ({ color: isActive ? 'var(--brand)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' })}>
-              <i className={`ti ${n.icon}`} style={{ fontSize: 20 }} />
+              style={({ isActive }) => ({
+                color: isActive ? 'var(--brand)' : 'var(--text-muted)',
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '7px 14px',
+                borderRadius: 6,
+                margin: '0 6px',
+                background: isActive ? 'rgba(199,70,52,0.08)' : 'transparent',
+                textDecoration: 'none',
+                fontSize: 12,
+                fontWeight: isActive ? 500 : 400,
+              })}>
+              <i className={`ti ${n.icon}`} style={{ fontSize: 16, flexShrink: 0 }} />
+              <span>{n.label}</span>
             </NavLink>
           ))}
         </div>

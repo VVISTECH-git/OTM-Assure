@@ -68,6 +68,20 @@ export default function Dashboard({ instance }) {
         }
       />
 
+      {/* New-user CTA — shown when there are no runs yet */}
+      {runs.length === 0 && (
+        <div style={{ background: 'var(--brand)', borderRadius: 10, padding: '1.25rem 1.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'white', marginBottom: 4 }}>Ready to run your first test?</div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}>Select an instance from the top bar, then click Run Test to get started.</div>
+          </div>
+          <button onClick={() => navigate('/run')}
+            style={{ background: 'white', color: 'var(--brand)', border: 'none', borderRadius: 7, padding: '8px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            ▶ Run Test
+          </button>
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: '1.25rem' }}>
         <MetricCard label="Total runs" value={totalRuns} />
         <MetricCard label="Steps passed (all runs)" value={passed} color="var(--green)" />
