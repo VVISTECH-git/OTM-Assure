@@ -124,6 +124,12 @@ const STEP_PATTERNS = {
     [l => l.includes('Phase 14a: Upload Document clicked'),        () => 'Upload Document opened'],
     [l => l.includes('Phase 14a: Upload result'),                  () => 'Batch List uploaded successfully ✓'],
     [l => l.includes('Phase 14a: Submit result'),                  () => 'Document type set to BATCH_LIST ✓'],
+    // Phase 14g — SmartLinks → Documents verification
+    [l => l.includes('Phase 14g: SmartLinks Documents clicked: true'), () => 'SmartLinks → Documents opened ✓'],
+    [l => l.includes('Phase 14g: BATCH_LIST document found: YES'),     () => 'BATCH_LIST document verified ✓'],
+    [l => l.includes('Phase 14g: Document type BATCH_LIST: YES'),      () => 'Document detail: BATCH_LIST type ✓'],
+    [l => l.includes('Phase 14g: Open button clicked'),                () => 'Batch List download triggered ✓'],
+    [l => l.includes('Phase 14g: All popups closed'),                  () => 'All popups closed → main window ✓'],
     [l => l.includes('Phase 14b: Event created: YES'),             () => 'Gate_In event created ✓'],
     [l => l.includes('Phase 14b: Gate_In visible: YES'),           () => 'Gate_In verified in tracking events ✓'],
     [l => l.includes('Phase 14c: Event created: YES'),             () => 'Load_Start event created ✓'],
@@ -191,16 +197,21 @@ const STEP_NAMES = {
     'Open Upload Document popup',       // 48
     'Upload Batch List document',       // 49
     'Set document type to BATCH_LIST',  // 50
-    'Add Gate_In tracking event',       // 51
-    'Verify Gate_In in tracking events',// 52
-    'Add Load_Start tracking event',    // 53
-    'Verify Load_Start in tracking events', // 54
-    'Add Load_End tracking event',      // 55
-    'Verify Load_End in tracking events', // 56
-    'Post PGI XML (HTTP 200)',          // 57
-    'Add Gate_Out tracking event',      // 58
-    'Verify Gate_Out in tracking events', // 59
-    'Sign out LEL7597_TMS (end)',       // 60
+    'Open SmartLinks → Documents',      // 51
+    'Verify BATCH_LIST document',       // 52
+    'Verify Document detail (BATCH_LIST)', // 53
+    'Trigger Batch List download',      // 54
+    'Close all popups → main window',   // 55
+    'Add Gate_In tracking event',       // 56
+    'Verify Gate_In in tracking events',// 57
+    'Add Load_Start tracking event',    // 58
+    'Verify Load_Start in tracking events', // 59
+    'Add Load_End tracking event',      // 60
+    'Verify Load_End in tracking events', // 61
+    'Post PGI XML (HTTP 200)',          // 62
+    'Add Gate_Out tracking event',      // 63
+    'Verify Gate_Out in tracking events', // 64
+    'Sign out LEL7597_TMS (end)',       // 65
   ],
 };
 
