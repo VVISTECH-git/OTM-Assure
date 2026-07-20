@@ -124,11 +124,11 @@ const STEP_PATTERNS = {
     [l => l.includes('Phase 14a: Upload Document clicked'),        () => 'Upload Document opened'],
     [l => l.includes('Phase 14a: Upload result'),                  () => 'Batch List uploaded successfully ✓'],
     [l => l.includes('Phase 14a: Submit result'),                  () => 'Document type set to BATCH_LIST ✓'],
-    // Phase 14g — SmartLinks → Documents verification
-    [l => l.includes('Phase 14g: SmartLinks Documents clicked: true'), () => 'SmartLinks → Documents opened ✓'],
-    [l => l.includes('Phase 14g: BATCH_LIST document found: YES'),     () => 'BATCH_LIST document verified ✓'],
-    [l => l.includes('Phase 14g: Document type BATCH_LIST: YES'),      () => 'Document detail: BATCH_LIST type ✓'],
-    [l => l.includes('Phase 14g: Open button clicked'),                () => 'Batch List download triggered ✓'],
+    // Phase 14g — SmartLinks → Documents verification (patterns match both success and skip/failure)
+    [l => l.includes('Phase 14g: SmartLinks Documents clicked'),       l => l.includes(': true') ? 'SmartLinks → Documents opened ✓' : 'SmartLinks → Documents skipped'],
+    [l => l.includes('Phase 14g: BATCH_LIST document found'),          l => l.includes(': YES') ? 'BATCH_LIST document verified ✓' : 'BATCH_LIST document: not found'],
+    [l => l.includes('Phase 14g: Document type BATCH_LIST'),           l => l.includes(': YES') ? 'Document detail: BATCH_LIST type ✓' : 'Document type: not verified'],
+    [l => l.includes('Phase 14g: Open button clicked'),                l => l.includes('skipped') ? 'Batch List download: skipped' : 'Batch List download triggered ✓'],
     [l => l.includes('Phase 14g: All popups closed'),                  () => 'All popups closed → main window ✓'],
     [l => l.includes('Phase 14b: Event created: YES'),             () => 'Gate_In event created ✓'],
     [l => l.includes('Phase 14b: Gate_In visible: YES'),           () => 'Gate_In verified in tracking events ✓'],

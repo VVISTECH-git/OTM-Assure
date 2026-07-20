@@ -2318,9 +2318,19 @@ describe('Test_02_TROrderIntegration', function () {
         }
       } else {
         await objTestUtil.logMessage('INFO', `Phase 14g: Shipment link not found for ${shipIdNumeric14}`);
+        // Fire all 5 Phase 14g patterns as skipped so the step pointer advances
+        await objTestUtil.logMessage('INFO', 'Phase 14g: SmartLinks Documents clicked: false');
+        await objTestUtil.logMessage('INFO', 'Phase 14g: BATCH_LIST document found: NO');
+        await objTestUtil.logMessage('INFO', 'Phase 14g: Document type BATCH_LIST: NO');
+        await objTestUtil.logMessage('INFO', 'Phase 14g: Open button clicked — skipped');
       }
     } catch(e14g) {
       await objTestUtil.logMessage('INFO', `Phase 14g: error: ${e14g.message.substring(0,120)}`);
+      // Fire all 5 Phase 14g patterns as skipped so the step pointer advances
+      await objTestUtil.logMessage('INFO', 'Phase 14g: SmartLinks Documents clicked: false');
+      await objTestUtil.logMessage('INFO', 'Phase 14g: BATCH_LIST document found: NO');
+      await objTestUtil.logMessage('INFO', 'Phase 14g: Document type BATCH_LIST: NO');
+      await objTestUtil.logMessage('INFO', 'Phase 14g: Open button clicked — skipped');
     }
 
     // Close all popup windows — keep only the main window
