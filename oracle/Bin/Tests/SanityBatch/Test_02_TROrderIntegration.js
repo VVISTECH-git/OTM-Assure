@@ -1571,6 +1571,7 @@ describe('Test_02_TROrderIntegration', function () {
     );
     await driver.sleep(2000);
     await objTestUtil.logMessage('INFO', 'Phase 13: Shipments - Review finder loaded');
+    await saveScreenshot(driver, screenshotsDir, 30);
 
     // Steps 110-112: Refine Query for shipmentId
     await showStep(driver, `Phase 13 Steps 110-112: Refine Query for shipment ${shipmentId}`);
@@ -1627,6 +1628,7 @@ describe('Test_02_TROrderIntegration', function () {
       return 'not found';
     `, shipIdNumeric);
     await objTestUtil.logMessage('INFO', `Phase 13 Step 113: Checkbox clicked: ${checkboxClicked13}`);
+    await saveScreenshot(driver, screenshotsDir, 31);
     assert.ok(checkboxClicked13 !== 'not found', `No checkbox found in Shipments-Review results`);
     await driver.sleep(1000);
 
@@ -1684,12 +1686,18 @@ describe('Test_02_TROrderIntegration', function () {
     };
 
     await fillField13('input[name="shipment/attribute15"]', 'JOHN DOE', 'Phase 13 Step 116: Driver Name');
+    await saveScreenshot(driver, screenshotsDir, 32);
     await fillField13('input[name="shipment/attribute16"]', 'TRL 001', 'Phase 13 Step 117: Trailer Number');
+    await saveScreenshot(driver, screenshotsDir, 33);
     await fillField13('input[name="shipment/attribute17"]', 'TRC 001', 'Phase 13 Step 118: Truck Number');
+    await saveScreenshot(driver, screenshotsDir, 34);
     await fillField13('input[name="shipment/attribute18"]', '0123456789', 'Phase 13 Step 119: Driver Phone');
+    await saveScreenshot(driver, screenshotsDir, 35);
     await fillField13('input[name="shipment/attribute19"]', '11:30', 'Phase 13 Step 120: Appointment Time');
+    await saveScreenshot(driver, screenshotsDir, 36);
     await fillField13('textarea[name="esrRemarkText_CARRIER_REMARKS"], textarea[name*="CARRIER_REMARKS"]',
       'I WILL COME ON TIME', 'Phase 13 Step 121: Carrier Remarks');
+    await saveScreenshot(driver, screenshotsDir, 37);
     await driver.sleep(500);
     await saveScreenshot(driver, screenshotsDir, 26);
 
@@ -1743,6 +1751,7 @@ describe('Test_02_TROrderIntegration', function () {
       } catch(e) { savingComplete13 = true; break; }
     }
     await objTestUtil.logMessage('INFO', `Phase 13 Saving complete: ${savingComplete13}`);
+    await saveScreenshot(driver, screenshotsDir, 38);
 
     await showStep(driver, 'Phase 13 Step 127: Clicking Close on Saving dialog');
     await objTestUtil.logMessage('INFO', 'Phase 13 Step 127: Waiting 2s then pressing Enter to click Close');
@@ -1791,11 +1800,17 @@ describe('Test_02_TROrderIntegration', function () {
       return found;
     };
     const v1_13 = check13('JOHN DOE',           'Driver Name');
+    await saveScreenshot(driver, screenshotsDir, 39);
     const v2_13 = check13('TRL 001',            'Trailer Number');
+    await saveScreenshot(driver, screenshotsDir, 40);
     const v3_13 = check13('TRC 001',            'Truck Number');
+    await saveScreenshot(driver, screenshotsDir, 41);
     const v4_13 = check13('0123456789',         'Driver Phone');
+    await saveScreenshot(driver, screenshotsDir, 42);
     const v5_13 = check13('11:30',              'Appointment Time');
+    await saveScreenshot(driver, screenshotsDir, 43);
     const v6_13 = check13('I WILL COME ON TIME','Carrier Remarks');
+    await saveScreenshot(driver, screenshotsDir, 44);
     await objTestUtil.logMessage('INFO', `Phase 13 Verify results: [${v1_13}] [${v2_13}] [${v3_13}] [${v4_13}] [${v5_13}] [${v6_13}]`);
 
     await showStep(driver, 'Phase 13 COMPLETE — Carrier Portal all steps passed');
@@ -1837,6 +1852,7 @@ describe('Test_02_TROrderIntegration', function () {
     await switchToRole(driver, 'KHC_WAREHOUSE', objTestUtil);
     await driver.wait(until.titleContains('Home'), 20000);
     await objTestUtil.logMessage('INFO', 'Phase 14: Role switched to KHC_WAREHOUSE');
+    await saveScreenshot(driver, screenshotsDir, 45);
 
     // ── Navigate to Shipments ─────────────────────────────────────────────────
     await showStep(driver, 'Phase 14: Shipments tile → search shipment');
@@ -1866,6 +1882,7 @@ describe('Test_02_TROrderIntegration', function () {
       } catch(e) {}
     }
     await objTestUtil.logMessage('INFO', `Phase 14: mainIFrame ready: ${mainFrameReady14}`);
+    await saveScreenshot(driver, screenshotsDir, 46);
     if (!mainFrameReady14) {
       // fallback: try frame(0) — maybe page uses unnamed frame
       try { await driver.switchTo().defaultContent(); await driver.switchTo().frame(0); await driver.switchTo().defaultContent(); } catch(e2) {}
@@ -1899,9 +1916,10 @@ describe('Test_02_TROrderIntegration', function () {
     `);
     await driver.sleep(4000);
     await objTestUtil.logMessage('INFO', `Phase 14: Shipment ${shipIdNumeric14} searched`);
+    await saveScreenshot(driver, screenshotsDir, 47);
 
     // ── addAndViewTrackingEvent helper (local to Phase 14) ────────────────────
-    async function addAndViewEvent14(stepLabel, quickCodeText, quickCodeValue) {
+    async function addAndViewEvent14(stepLabel, quickCodeText, quickCodeValue, screenshotBase) {
       await driver.switchTo().defaultContent();
       try { await driver.switchTo().frame('mainIFrame'); } catch(e) { try { await driver.switchTo().frame(0); } catch(e2) {} }
       await driver.executeScript(`
@@ -2029,6 +2047,7 @@ describe('Test_02_TROrderIntegration', function () {
         const sTxt = await driver.executeScript(`return document.body ? document.body.innerText.substring(0,200) : '';`);
         const created = sTxt.indexOf('successfully created') !== -1 || sTxt.indexOf('Success') !== -1;
         await objTestUtil.logMessage('INFO', `${stepLabel}: Event created: ${created ? 'YES ✓' : 'NO ✗'} — ${sTxt.replace(/\n/g,' ').substring(0,80)}`);
+        if (screenshotBase !== undefined) await saveScreenshot(driver, screenshotsDir, screenshotBase);
         await driver.close();
         await driver.switchTo().window(mainH);
       }
@@ -2086,6 +2105,7 @@ describe('Test_02_TROrderIntegration', function () {
         }
         const evVisible = vTxt.indexOf(quickCodeText) !== -1;
         await objTestUtil.logMessage('INFO', `${stepLabel}: ${quickCodeText} visible: ${evVisible ? 'YES ✓' : 'NO ✗'}`);
+        if (screenshotBase !== undefined) await saveScreenshot(driver, screenshotsDir, screenshotBase + 1);
         await driver.close();
         await driver.switchTo().window(mainH2);
       }
@@ -2118,6 +2138,7 @@ describe('Test_02_TROrderIntegration', function () {
       const upLink = await driver.findElement(By.xpath('//a[text()="Upload Document"] | //a[normalize-space(.)="Upload Document"]'));
       await upLink.click();
       await objTestUtil.logMessage('INFO', 'Phase 14a: Upload Document clicked ✓');
+      await saveScreenshot(driver, screenshotsDir, 48);
     } catch(e) {
       await objTestUtil.logMessage('INFO', `Phase 14a: Upload Document error: ${e.message.substring(0,80)}`);
     }
@@ -2153,6 +2174,7 @@ describe('Test_02_TROrderIntegration', function () {
       await driver.sleep(4000);
       const upResult14 = await driver.executeScript(`return document.body ? document.body.innerText.substring(0,200) : '';`);
       await objTestUtil.logMessage('INFO', `Phase 14a: Upload result: ${upResult14.replace(/\n/g,' ').substring(0,100)}`);
+      await saveScreenshot(driver, screenshotsDir, 49);
       // Select BATCH_LIST doc type
       await driver.executeScript(`
         var sel = document.querySelector('select');
@@ -2170,6 +2192,7 @@ describe('Test_02_TROrderIntegration', function () {
       await driver.sleep(3000);
       const submitResult14 = await driver.executeScript(`return document.body ? document.body.innerText.substring(0,200) : '';`);
       await objTestUtil.logMessage('INFO', `Phase 14a: Submit result: ${submitResult14.replace(/\n/g,' ').substring(0,100)}`);
+      await saveScreenshot(driver, screenshotsDir, 50);
       await driver.close();
       await driver.switchTo().window(mainUpH);
       await objTestUtil.logMessage('INFO', 'Phase 14a: Upload Document popup closed');
@@ -2226,6 +2249,7 @@ describe('Test_02_TROrderIntegration', function () {
           return false;
         `);
         await objTestUtil.logMessage('INFO', `Phase 14g: SmartLinks Documents clicked: ${docClicked}`);
+        await saveScreenshot(driver, screenshotsDir, 51);
         await driver.sleep(4000);
 
         // Wait for Documents popup window
@@ -2245,6 +2269,7 @@ describe('Test_02_TROrderIntegration', function () {
           const docPageText = await driver.executeScript(`return document.body ? document.body.innerText : '';`);
           const hasBatchList = docPageText.includes('BATCH_LIST') || docPageText.includes('BATCH LIST');
           await objTestUtil.logMessage('INFO', `Phase 14g: BATCH_LIST document found: ${hasBatchList ? 'YES' : 'NO'}`);
+          await saveScreenshot(driver, screenshotsDir, 52);
 
           // Click the document ID link to View it
           const handlesBeforeView = await driver.getAllWindowHandles();
@@ -2270,6 +2295,7 @@ describe('Test_02_TROrderIntegration', function () {
             const docTypeOk  = viewText.includes('BATCH_LIST') || viewText.includes('BATCH LIST');
             const fileNameOk = viewText.includes('Batch List');
             await objTestUtil.logMessage('INFO', `Phase 14g: Document type BATCH_LIST: ${docTypeOk ? 'YES' : 'NO'}`);
+            await saveScreenshot(driver, screenshotsDir, 53);
             await objTestUtil.logMessage('INFO', `Phase 14g: File name Batch List: ${fileNameOk ? 'YES' : 'NO'}`);
 
             // Click Open to trigger download
@@ -2282,6 +2308,7 @@ describe('Test_02_TROrderIntegration', function () {
               if (openBtn) openBtn.click();
             `);
             await objTestUtil.logMessage('INFO', 'Phase 14g: Open button clicked — file downloading');
+            await saveScreenshot(driver, screenshotsDir, 54);
             await driver.sleep(3000);
           } else {
             await objTestUtil.logMessage('INFO', 'Phase 14g: View popup did not open — skipping');
@@ -2308,6 +2335,7 @@ describe('Test_02_TROrderIntegration', function () {
       }
       await driver.switchTo().window(mainH14g);
       await objTestUtil.logMessage('INFO', 'Phase 14g: All popups closed — back to main window');
+      await saveScreenshot(driver, screenshotsDir, 55);
     } catch(eClose) {
       await objTestUtil.logMessage('INFO', `Phase 14g: close popups error: ${eClose.message.substring(0,80)}`);
     }
@@ -2320,15 +2348,15 @@ describe('Test_02_TROrderIntegration', function () {
     // ── Phase 14b–e: Tracking events ─────────────────────────────────────────
     await showStep(driver, 'Phase 14b: Add Gate_In event');
     await objTestUtil.logMessage('INFO', 'Phase 14b: Gate_In');
-    await addAndViewEvent14('Phase 14b', 'Gate_In', 'TMS.GI');
+    await addAndViewEvent14('Phase 14b', 'Gate_In', 'TMS.GI', 56);
 
     await showStep(driver, 'Phase 14c: Add Load_Start event');
     await objTestUtil.logMessage('INFO', 'Phase 14c: Load_Start');
-    await addAndViewEvent14('Phase 14c', 'Load_Start', 'TMS.LS');
+    await addAndViewEvent14('Phase 14c', 'Load_Start', 'TMS.LS', 58);
 
     await showStep(driver, 'Phase 14d: Add Load_End event');
     await objTestUtil.logMessage('INFO', 'Phase 14d: Load_End');
-    await addAndViewEvent14('Phase 14d', 'Load_End', 'TMS.LE');
+    await addAndViewEvent14('Phase 14d', 'Load_End', 'TMS.LE', 60);
 
     // ── Phase 14e: POST PGI XML ───────────────────────────────────────────────
     await showStep(driver, 'Phase 14e: POST PGI XML');
@@ -2354,13 +2382,14 @@ describe('Test_02_TROrderIntegration', function () {
       });
       const pgiOk14 = pgiRes14.status === 200 && pgiRes14.body.indexOf('Error') === -1;
       await objTestUtil.logMessage('INFO', `Phase 14e: PGI POST status=${pgiRes14.status} ${pgiOk14 ? '✓' : '✗'} — ${pgiRes14.body.replace(/\n/g,' ').substring(0,150)}`);
+      await saveScreenshot(driver, screenshotsDir, 62);
     }
     await driver.sleep(3000);
 
     // ── Phase 14f: Gate_Out ───────────────────────────────────────────────────
     await showStep(driver, 'Phase 14f: Add Gate_Out event');
     await objTestUtil.logMessage('INFO', 'Phase 14f: Gate_Out');
-    await addAndViewEvent14('Phase 14f', 'Gate_Out', 'TMS.GO');
+    await addAndViewEvent14('Phase 14f', 'Gate_Out', 'TMS.GO', 63);
 
     // ── Sign out KHC_WAREHOUSE ────────────────────────────────────────────────
     await showStep(driver, 'Phase 14: Sign out LEL7597_TMS');
@@ -2374,6 +2403,7 @@ describe('Test_02_TROrderIntegration', function () {
       await soEl14.click();
       await driver.sleep(3000);
       await objTestUtil.logMessage('INFO', 'Phase 14: LEL7597_TMS signed out');
+      await saveScreenshot(driver, screenshotsDir, 65);
     } catch(e) {
       await objTestUtil.logMessage('INFO', `Phase 14: Sign out error: ${e.message.substring(0,80)}`);
     }
