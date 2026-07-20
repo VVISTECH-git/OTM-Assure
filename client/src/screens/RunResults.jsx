@@ -82,10 +82,13 @@ export default function RunResults() {
         <Card padding={0}>
           <div style={{ padding: '0.75rem 1rem', borderBottom: '0.5px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, fontWeight: 500 }}>Test Evidence — {selectedSc}</span>
-            {selectedResult && (
+            {selectedResult && selectedResult.status !== 'running' && (
               <Badge color={selectedResult.status === 'pass' ? 'green' : 'red'}>
                 {selectedResult.status === 'pass' ? 'Passed' : 'Failed'}
               </Badge>
+            )}
+            {selectedResult && selectedResult.status === 'running' && (
+              <Badge color="amber">Running</Badge>
             )}
           </div>
 
