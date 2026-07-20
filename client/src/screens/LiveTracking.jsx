@@ -16,6 +16,7 @@ export default function LiveTracking({ instance }) {
 
   const pollRef = useRef(null);
   const runIdRef = useRef(null);
+  const stepLogRef = useRef(null);
 
   useEffect(() => {
     api.scenarios.list().then(setScenarios);
@@ -126,6 +127,13 @@ export default function LiveTracking({ instance }) {
     esRef.current?.close();
   }
 
+  // Auto-scroll step log to bottom when new steps arrive
+  useEffect(() => {
+    if (stepLogRef.current) {
+      stepLogRef.current.scrollTop = stepLogRef.current.scrollHeight;
+    }
+  }, [activeSteps.length]);
+
   const passed = Object.values(scenarioStatus).filter(s => s === 'pass').length;
   const failed = Object.values(scenarioStatus).filter(s => s === 'fail').length;
   const done = passed + failed;
@@ -208,7 +216,7 @@ export default function LiveTracking({ instance }) {
             <span style={{ fontSize: 13, fontWeight: 500 }}>Step log</span>
             <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{activeScenario?.name || (runStatus === 'idle' ? 'Waiting for run…' : 'All steps')}</span>
           </div>
-          <div style={{ flex: 1, padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto', maxHeight: 400 }}>
+          <div ref={stepLogRef} style={{ flex: 1, padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto', maxHeight: 400 }}>
             {activeSteps.length === 0 && (
               <div style={{ fontSize: 12, color: 'var(--text-hint)', padding: 8 }}>
                 {runStatus === 'idle' ? 'Steps will appear here during execution.' : 'Waiting for first step…'}
