@@ -120,10 +120,10 @@ const STEP_PATTERNS = {
     // Phase 5 — TX3 delivery note
     [l => l.includes('Posting TX3 delivery note'),      l => { const m = l.match(/DN (\S+)/); return m ? `TX3 delivery note DN ${m[1]}` : 'Posting TX3'; }],
     [l => l.includes('TX3 accepted'),                   () => 'TX3 accepted — HTTP 200 OK'],
+    // Phase 6 — Orders Unplanned (appears in log BEFORE delivery note verification)
+    [l => l.includes('Order found in Orders - Unplanned'), () => 'Order found in Orders - Unplanned bucket'],
     [l => l.includes('Delivery Note Number verified'),  l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('LDD after TX3 verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    // Phase 6 — Orders Unplanned check
-    [l => l.includes('Order found in Orders - Unplanned'), () => 'Order found in Orders - Unplanned bucket'],
     // Phase 7-8 — Bulk Plan
     [l => l.includes('Bulk Plan - Buy clicked'),        () => 'Bulk Plan initiated'],
     [l => l.includes('Bulk Plan status: COMPLETED'),    () => 'Bulk Plan completed — 0 orders failed'],
@@ -402,10 +402,10 @@ function getScenarioSteps(scenarioId) {
       // Phase 5 — TX3
       'Post TX3 delivery note',
       'Verify TX3 accepted (HTTP 200)',
+      // Phase 6 — Orders Unplanned (appears before DN verification in log)
+      'Verify order in Orders - Unplanned',
       'Verify Delivery Note Number',
       'Verify LDD after TX3',
-      // Phase 6 — Orders Unplanned
-      'Verify order in Orders - Unplanned',
       // Phase 7-8 — Bulk Plan
       'Initiate Bulk Plan - Buy',
       'Verify Bulk Plan COMPLETED',

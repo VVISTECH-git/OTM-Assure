@@ -81,10 +81,10 @@ const STEP_PATTERNS = {
     // Phase 5 — TX3
     [l => l.includes('Posting TX3 delivery note'),      l => { const m = l.match(/DN (\S+)/); return m ? `TX3 delivery note DN ${m[1]}` : 'Posting TX3'; }],
     [l => l.includes('TX3 accepted'),                   () => 'TX3 accepted — HTTP 200 OK'],
+    // Phase 6 — Orders Unplanned (appears in log BEFORE delivery note verification)
+    [l => l.includes('Order found in Orders - Unplanned'), () => 'Order found in Orders - Unplanned bucket'],
     [l => l.includes('Delivery Note Number verified'),  l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
     [l => l.includes('LDD after TX3 verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    // Phase 6 — Orders Unplanned
-    [l => l.includes('Order found in Orders - Unplanned'), () => 'Order found in Orders - Unplanned bucket'],
     // Phase 7-8 — Bulk Plan
     [l => l.includes('Bulk Plan - Buy clicked'),        () => 'Bulk Plan initiated'],
     [l => l.includes('Bulk Plan status: COMPLETED'),    () => 'Bulk Plan completed — 0 orders failed'],
@@ -156,9 +156,9 @@ const STEP_NAMES = {
     'Verify LDD after TX2',             // 13
     'Post TX3 delivery note',           // 14
     'Verify TX3 accepted',              // 15
-    'Verify Delivery Note Number',      // 16
-    'Verify LDD after TX3',             // 17
-    'Verify order in Orders - Unplanned', // 18
+    'Verify order in Orders - Unplanned', // 16
+    'Verify Delivery Note Number',      // 17
+    'Verify LDD after TX3',             // 18
     'Initiate Bulk Plan - Buy',         // 19
     'Verify Bulk Plan COMPLETED',       // 20
     'Capture Shipment ID',              // 21
