@@ -81,13 +81,15 @@ export default function LiveTracking({ instance }) {
 
     es.addEventListener('run:started', e => {
       const d = JSON.parse(e.data);
-      setActiveRun(d);
       setRunStatus('running');
       setElapsed(0);
       setSteps({});
       setScenarioStatus({});
       clearInterval(timerRef.current);
       timerRef.current = setInterval(() => setElapsed(p => p + 1), 1000);
+      // Fetch full run so scenario_ids is available for filtering
+      runIdRef.current = d.runId;
+      loadRunState(d.runId);
     });
 
     es.addEventListener('scenario:started', e => {
@@ -134,9 +136,7 @@ export default function LiveTracking({ instance }) {
   const runScenarios = runScenarioIds.length > 0 ? scenarios.filter(s => runScenarioIds.includes(s.id)) : scenarios;
 
   const allStepsList = Object.values(steps).flat();
-  const completedSteps = allStepsList.filter(s => s.status === 'pass' || s.status === 'fail' || s.status === 'skip').length;
-  const totalSteps = allStepsList.length;
-  const pct = totalSteps > 0 ? Math.round(completedSteps / totalSteps * 100) : (total > 0 ? Math.round(done / total * 100) : 0);
+  const pct = runStatus === 'completed' ? 100 : (total > 0 ? Math.round(done / total * 100) : 0);
   const activeScenario = runScenarios.find(s => scenarioStatus[s.id] === 'running')
     || (runStatus === 'completed' ? runScenarios[runScenarios.length - 1] : null);
   const activeSteps = activeScenario ? (steps[activeScenario.id] || []) : allStepsList;

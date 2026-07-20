@@ -99,18 +99,82 @@ const STEP_PATTERNS = {
     [l => l.includes('Page title') && l.includes('Transportation'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
   ],
   'SC-02': [
-    [l => l.includes('Generating order ID'),          l => { const m = l.match(/Generating order ID (\S+)/); return m ? `Order ID: ${m[1]}` : 'Order ID generated'; }],
-    [l => l.includes('Uploading XML to WMServlet'),   l => { const m = l.match(/for order (\S+)/); return m ? `Uploading: ${m[1]}` : 'Uploading XML'; }],
-    [l => l.includes('WMServlet accepted'),           l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Waiting for agent'),            l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Logging in to OTM'),            l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Navigating to Order Management'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Searching for order'),          l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Buy Itinerary verified'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Fixed Itinerary verified'),     l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Movement Type verified'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Equipment Type verified'),      l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
-    [l => l.includes('Order indicator verified'),     l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    // Phase 1 — TX1 order upload
+    [l => l.includes('Generating order ID'),            l => { const m = l.match(/Generating order ID (\S+)/); return m ? `Order ID: ${m[1]}` : 'Order ID generated'; }],
+    [l => l.includes('Uploading XML to WMServlet'),     l => { const m = l.match(/for order (\S+)/); return m ? `Uploading TX1: ${m[1]}` : 'Uploading TX1'; }],
+    [l => l.includes('WMServlet accepted order'),       () => 'TX1 accepted — HTTP 200 OK'],
+    // Phase 2 — OTM login + role switch
+    [l => l.includes('Logging in to OTM'),              () => 'Logging in as LEL7597_TMS'],
+    [l => l.includes('Role switched to TURKEY_PLANNER'),() => 'Switched to TURKEY_PLANNER role'],
+    // Phase 3 — Order verification (Orders - New)
+    [l => l.includes('Navigating to Order Management'), () => 'Navigating to Orders - New'],
+    [l => l.includes('Movement Type verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Equipment Type verified'),        l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('LDD verified:'),                  l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Buy Itinerary verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Fixed Itinerary verified'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    // Phase 4 — TX2 modification
+    [l => l.includes('Posting TX2 modification'),       l => { const m = l.match(/for TMS\.(\S+) with RDD (\S+)/); return m ? `TX2: order ${m[1]}, RDD ${m[2]}` : 'Posting TX2'; }],
+    [l => l.includes('TX2 accepted'),                   () => 'TX2 accepted — HTTP 200 OK'],
+    [l => l.includes('LDD after TX2 verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    // Phase 5 — TX3 delivery note
+    [l => l.includes('Posting TX3 delivery note'),      l => { const m = l.match(/DN (\S+)/); return m ? `TX3 delivery note DN ${m[1]}` : 'Posting TX3'; }],
+    [l => l.includes('TX3 accepted'),                   () => 'TX3 accepted — HTTP 200 OK'],
+    [l => l.includes('Delivery Note Number verified'),  l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('LDD after TX3 verified'),         l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    // Phase 6 — Orders Unplanned check
+    [l => l.includes('Order found in Orders - Unplanned'), () => 'Order found in Orders - Unplanned bucket'],
+    // Phase 7-8 — Bulk Plan
+    [l => l.includes('Bulk Plan - Buy clicked'),        () => 'Bulk Plan initiated'],
+    [l => l.includes('Bulk Plan status: COMPLETED'),    () => 'Bulk Plan completed — 0 orders failed'],
+    [l => l.includes('Shipment ID captured'),           l => { const m = l.match(/captured: (TMS\.\S+)/); return m ? `Shipment created: ${m[1]}` : 'Shipment ID captured'; }],
+    // Phase 9 — Planned status
+    [l => l.includes('Orders-Planned status'),          l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    // Phase 10 — Approve for Execution
+    [l => l.includes('Shipment found in Shipments-New'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Approve for Execution clicked'),  () => 'Approve for Execution clicked'],
+    [l => l.includes('Approve for Execution popup closed'), () => 'Approve for Execution — done'],
+    // Phase 11 — Sent to Carrier
+    [l => l.includes('Shipment in Sent-to-Carrier'),    l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Indicator: Orange found'),        () => 'Orange indicator confirmed'],
+    // Phase 12 — Sign out LEL7597_TMS
+    [l => l.includes('Sign out verified'),              () => 'LEL7597_TMS signed out'],
+    // Phase 13 — Carrier Portal login
+    [l => l.includes('Carrier logged in'),              () => 'TR_TST_CARRIER logged in'],
+    [l => l.includes('Shipments - Review finder loaded'),() => 'Navigated to Shipments - Review'],
+    [l => l.includes('Phase 13 Step 113: Checkbox clicked'), l => { const m = l.match(/clicked: (TMS\.\S+)/); return m ? `Shipment selected: ${m[1]}` : 'Shipment checkbox selected'; }],
+    // Phase 13 — Mass Update
+    [l => l.includes('Phase 13 Step 116: Driver Name'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Step 117: Trailer'),     l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Step 118: Truck'),       l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Step 119: Driver Phone'),l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Step 120: Appointment'),l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Step 121: Carrier Remarks'),l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 13 Saving complete: true'), () => 'Mass Update saved ✓'],
+    // Phase 13 — Verify saved values
+    [l => l.includes('Phase 13 Driver Name: FOUND'),    () => 'Driver Name verified ✓'],
+    [l => l.includes('Phase 13 Trailer Number: FOUND'), () => 'Trailer Number verified ✓'],
+    [l => l.includes('Phase 13 Truck Number: FOUND'),   () => 'Truck Number verified ✓'],
+    [l => l.includes('Phase 13 Driver Phone: FOUND'),   () => 'Driver Phone verified ✓'],
+    [l => l.includes('Phase 13 Appointment Time: FOUND'),() => 'Appointment Time verified ✓'],
+    [l => l.includes('Phase 13 Carrier Remarks: FOUND'),() => 'Carrier Remarks verified ✓'],
+    // Phase 14 — KHC_WAREHOUSE
+    [l => l.includes('Phase 14: Role switched to KHC_WAREHOUSE'), () => 'Switched to KHC_WAREHOUSE role'],
+    [l => l.includes('Phase 14: mainIFrame ready: true'),          () => 'Shipments page loaded'],
+    [l => l.includes('Phase 14: Shipment') && l.includes('searched'), l => l.replace(/\[INFO[^\]]*\]\s*/, '')],
+    [l => l.includes('Phase 14a: Upload Document clicked'),        () => 'Upload Document opened'],
+    [l => l.includes('Phase 14a: Upload result'),                  () => 'Batch List uploaded successfully ✓'],
+    [l => l.includes('Phase 14a: Submit result'),                  () => 'Document type set to BATCH_LIST ✓'],
+    [l => l.includes('Phase 14b: Event created: YES'),             () => 'Gate_In event created ✓'],
+    [l => l.includes('Phase 14b: Gate_In visible: YES'),           () => 'Gate_In verified in tracking events ✓'],
+    [l => l.includes('Phase 14c: Event created: YES'),             () => 'Load_Start event created ✓'],
+    [l => l.includes('Phase 14c: Load_Start visible: YES'),        () => 'Load_Start verified in tracking events ✓'],
+    [l => l.includes('Phase 14d: Event created: YES'),             () => 'Load_End event created ✓'],
+    [l => l.includes('Phase 14d: Load_End visible: YES'),          () => 'Load_End verified in tracking events ✓'],
+    [l => l.includes('Phase 14e: PGI POST status=200'),            () => 'PGI posted — HTTP 200 ✓'],
+    [l => l.includes('Phase 14f: Event created: YES'),             () => 'Gate_Out event created ✓'],
+    [l => l.includes('Phase 14f: Gate_Out visible: YES'),          () => 'Gate_Out verified in tracking events ✓'],
+    [l => l.includes('Phase 14: LEL7597_TMS signed out'),          () => 'LEL7597_TMS signed out — all done'],
   ],
 };
 
@@ -317,18 +381,82 @@ function getScenarioSteps(scenarioId) {
   const stepMap = {
     'SC-01': ['Load OTM URL', 'Enter username', 'Enter password', 'Click Sign In', 'Verify home page'],
     'SC-02': [
+      // Phase 1 — TX1
       'Generate test order ID',
-      'Upload XML to WMServlet',
-      'Verify WMServlet accepted',
-      'Wait for agent processing',
-      'Login to OTM',
-      'Navigate to Order Release',
-      'Search for order',
+      'Upload TX1 XML to WMServlet',
+      'Verify TX1 accepted (HTTP 200)',
+      // Phase 2 — Login + role
+      'Login to OTM as LEL7597_TMS',
+      'Switch to TURKEY_PLANNER role',
+      // Phase 3 — Order verification
+      'Navigate to Orders - New',
+      'Verify Movement Type = DOMESTIC',
+      'Verify Equipment Type = DRY',
+      'Verify LDD (TX1)',
       'Verify Buy Itinerary = TURKEY_ITINERARY',
-      'Verify Fixed Itinerary = TURKEY_TO_ROE',
-      'Verify Movement Type = EXPORT',
-      'Verify Equipment Type = DRY/REEFER',
-      'Verify Order Indicator = W',
+      'Verify Fixed Itinerary = Buy Itinerary Profile',
+      // Phase 4 — TX2
+      'Post TX2 RDD modification',
+      'Verify TX2 accepted (HTTP 200)',
+      'Verify LDD after TX2',
+      // Phase 5 — TX3
+      'Post TX3 delivery note',
+      'Verify TX3 accepted (HTTP 200)',
+      'Verify Delivery Note Number',
+      'Verify LDD after TX3',
+      // Phase 6 — Orders Unplanned
+      'Verify order in Orders - Unplanned',
+      // Phase 7-8 — Bulk Plan
+      'Initiate Bulk Plan - Buy',
+      'Verify Bulk Plan COMPLETED',
+      'Capture Shipment ID',
+      // Phase 9 — Planned status
+      'Verify order status = PLANNING_PLANNED',
+      // Phase 10 — Approve for Execution
+      'Verify shipment in Shipments - New',
+      'Click Approve for Execution',
+      'Verify Approve for Execution done',
+      // Phase 11 — Sent to Carrier
+      'Verify shipment in Sent-to-Carrier',
+      'Verify Orange indicator',
+      // Phase 12 — Sign out
+      'Sign out LEL7597_TMS',
+      // Phase 13 — Carrier Portal login
+      'Login as TR_TST_CARRIER',
+      'Navigate to Shipments - Review',
+      'Select shipment checkbox',
+      // Phase 13 — Mass Update
+      'Enter Driver Name',
+      'Enter Trailer Number',
+      'Enter Truck Number',
+      'Enter Driver Phone',
+      'Enter Appointment Time',
+      'Enter Carrier Remarks',
+      'Save Mass Update',
+      // Phase 13 — Verify
+      'Verify Driver Name saved',
+      'Verify Trailer Number saved',
+      'Verify Truck Number saved',
+      'Verify Driver Phone saved',
+      'Verify Appointment Time saved',
+      'Verify Carrier Remarks saved',
+      // Phase 14 — KHC_WAREHOUSE
+      'Switch to KHC_WAREHOUSE role',
+      'Load Shipments page',
+      'Search shipment in KHC_WAREHOUSE',
+      'Open Upload Document popup',
+      'Upload Batch List document',
+      'Set document type to BATCH_LIST',
+      'Add Gate_In tracking event',
+      'Verify Gate_In in tracking events',
+      'Add Load_Start tracking event',
+      'Verify Load_Start in tracking events',
+      'Add Load_End tracking event',
+      'Verify Load_End in tracking events',
+      'Post PGI XML (HTTP 200)',
+      'Add Gate_Out tracking event',
+      'Verify Gate_Out in tracking events',
+      'Sign out LEL7597_TMS',
     ],
     'SC-03': ['Login to OTM', 'Search multiple orders', 'Select all suppliers', 'Consolidate shipment', 'Verify consolidation'],
     'SC-04': ['Login to OTM', 'Navigate to Rate Inquiry', 'Enter origin & destination', 'Run rate lookup', 'Verify carrier rates'],
