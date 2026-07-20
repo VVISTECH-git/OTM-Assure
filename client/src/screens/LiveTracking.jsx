@@ -127,13 +127,6 @@ export default function LiveTracking({ instance }) {
     esRef.current?.close();
   }
 
-  // Auto-scroll step log to bottom when new steps arrive
-  useEffect(() => {
-    if (stepLogRef.current) {
-      stepLogRef.current.scrollTop = stepLogRef.current.scrollHeight;
-    }
-  }, [activeSteps.length]);
-
   const passed = Object.values(scenarioStatus).filter(s => s === 'pass').length;
   const failed = Object.values(scenarioStatus).filter(s => s === 'fail').length;
   const done = passed + failed;
@@ -148,6 +141,13 @@ export default function LiveTracking({ instance }) {
   const activeScenario = runScenarios.find(s => scenarioStatus[s.id] === 'running')
     || (runStatus === 'completed' ? runScenarios[runScenarios.length - 1] : null);
   const activeSteps = activeScenario ? (steps[activeScenario.id] || []) : allStepsList;
+
+  // Auto-scroll step log to bottom when new steps arrive (must be after activeSteps declaration)
+  useEffect(() => {
+    if (stepLogRef.current) {
+      stepLogRef.current.scrollTop = stepLogRef.current.scrollHeight;
+    }
+  }, [activeSteps.length]);
 
   return (
     <div>

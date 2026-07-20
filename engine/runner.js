@@ -421,7 +421,7 @@ function getScenarioSteps(scenarioId) {
       // Phase 10 — Approve for Execution
       'Verify shipment in Shipments - New',
       'Click Approve for Execution',
-      'Verify Approve for Execution done',
+      'Approve for Execution done',
       // Phase 11 — Sent to Carrier
       'Verify shipment in Sent-to-Carrier',
       'Verify Orange indicator',
@@ -467,7 +467,7 @@ function getScenarioSteps(scenarioId) {
       'Post PGI XML (HTTP 200)',
       'Add Gate_Out tracking event',
       'Verify Gate_Out in tracking events',
-      'Sign out LEL7597_TMS',
+      'Sign out LEL7597_TMS (end)',
     ],
     'SC-03': ['Login to OTM', 'Search multiple orders', 'Select all suppliers', 'Consolidate shipment', 'Verify consolidation'],
     'SC-04': ['Login to OTM', 'Navigate to Rate Inquiry', 'Enter origin & destination', 'Run rate lookup', 'Verify carrier rates'],

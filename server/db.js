@@ -291,7 +291,7 @@ function seed() {
     [6,  'Verify Movement Type',                'MOVEMENT_TYPE refnum verified in order detail'],
     [7,  'Verify Equipment Type',               'EQUIPMENT_TYPE refnum verified in order detail'],
     [8,  'Verify LDD (TX1)',                    'Late Delivery Date set correctly from TX1'],
-    [9,  'Verify Buy Itinerary',                'Buy Itinerary Profile = TMS.TURKEY_ITINERARY'],
+    [9,  'Verify Buy Itinerary = TURKEY_ITINERARY', 'Buy Itinerary Profile = TMS.TURKEY_ITINERARY on Constraints tab'],
     [10, 'Verify Fixed Itinerary',              'Fixed Itinerary verified in order detail'],
     [11, 'Post TX2 RDD modification',           'TX2 XML (RDD +4) POSTed to WMServlet — HTTP 200'],
     [12, 'Verify TX2 accepted',                 'TX2 accepted — HTTP 200 OK'],
@@ -351,7 +351,7 @@ function seed() {
   ];
   const upsertStep = db.prepare(`INSERT OR REPLACE INTO scenario_steps (scenario_id,step_index,step_name,expected) VALUES ('SC-02',?,?,?)`);
   for (const [idx, name, exp] of sc02AllSteps) upsertStep.run(idx, name, exp);
-  console.log('[DB] SC-02 step definitions synced (61 steps, indices 0-60)');
+  console.log('[DB] SC-02 step definitions synced (66 steps, indices 0-65)');
 
   const existingNotifications = db.prepare('SELECT COUNT(*) as c FROM notifications').get();
   if (existingNotifications.c === 0) {
